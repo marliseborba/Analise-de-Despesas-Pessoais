@@ -1,6 +1,7 @@
 ﻿using Expenses.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using Expenses.Models.ViewModels;
 
 namespace Expenses.Controllers
 {
@@ -14,6 +15,11 @@ namespace Expenses.Controllers
         }
 
         public IActionResult Index()
+        {
+            return View();
+        }
+
+        public IActionResult Upload()
         {
             return View();
         }
