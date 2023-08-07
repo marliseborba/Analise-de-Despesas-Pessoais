@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Expenses.Models.Enums;
+using System.Collections.Generic;
 
 namespace Expenses.Models
 {
@@ -9,5 +10,7 @@ namespace Expenses.Models
         public DateTime DtFinal { get; set; }
         public double Total { get; set; }
         public ICollection<Expense> Expenses { get; set; } = new List<Expense>();
+        public InvoiceType InvoiceType { get; set; }
+        public InvoiceStatus InvoiceStatus { get; set; }
     }
 }
