@@ -1,7 +1,10 @@
+using Expenses.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<InvoiceService>();
 
 var app = builder.Build();
 
@@ -22,6 +25,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Upload}/{id?}");
+    pattern: "{controller=Invoice}/{action=Index}/{id?}");
 
 app.Run();
