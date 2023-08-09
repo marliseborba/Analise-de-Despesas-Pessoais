@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Expenses.Models.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace Expenses.Models
 {
@@ -10,7 +11,11 @@ namespace Expenses.Models
         [DisplayFormat(DataFormatString = "{0:F2}")]
         public double Value { get; set; }
         public string Identifier { get; set; }
+        public Owner Owner { get; set; }
+        public int OwnerId { get; set; }
+        public MovementType MovementType { get; set; }
         public Establishment Establishment { get; set; }
+        public int EstablishmentId { get; set; }
 
         public Movement() 
         {
