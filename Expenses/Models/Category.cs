@@ -14,5 +14,20 @@
             Id = id;
             Name = name;
         }
+
+        public Category(int id, string name, ICollection<SubCategory> subCategories) : this(id, name)
+        {
+            SubCategories = subCategories;
+        }
+
+        public Category(int id, string name, ICollection<SubCategory> subCategories, ICollection<Establishment> establishments) : this(id, name, subCategories)
+        {
+            Establishments = establishments;
+        }
+
+        public Category(int id, string name, ICollection<Establishment> establishments) : this(id, name)
+        {
+            Establishments = establishments;
+        }
     }
 }
