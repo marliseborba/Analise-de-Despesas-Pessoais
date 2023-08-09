@@ -1,8 +1,9 @@
 ﻿namespace Expenses.Models.Enums
 {
-    public enum InvoiceType
+    public enum MovementType
     {
         CREDIT,
-        DEBIT
+        DEBIT,
+        ENTRY
     }
 }
