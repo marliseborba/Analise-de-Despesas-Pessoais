@@ -1,17 +1,16 @@
-﻿using Expenses.Models;
-using Expenses.Models.Enums;
+﻿using Expenses.Models.Enums;
+using Expenses.Models;
 using System.Globalization;
 
 namespace Expenses.Services
 {
-    public class InvoiceService
+    public class MovementService
     {
-        public static Invoice Upload()
+        public ICollection<Movement> Upload()
         {
             string path = @"c:\temp\NU_87348844_01JUL2023_21JUL2023.csv";
-            Invoice invoice = new Invoice();
 
-            List<Expense> expenses = new List<Expense>();
+            List<Movement> movements = new List<Movement>();
 
             try
             {
@@ -28,25 +27,18 @@ namespace Expenses.Services
                         double value = double.Parse(attributes[1], CultureInfo.InvariantCulture);
                         string identifier = attributes[2];
                         string description = attributes[3];
-                        Expense exp = new Expense(count, description, date, value, identifier, invoice);
+                        Movement exp = new Movement(count, description, date, value, identifier);
                         sum += value;
                         count++;
-                        expenses.Add(exp);
+                        movements.Add(exp);
                     }
-                    invoice.Id = 1;
-                    invoice.DtInitial = new DateTime(2023, 07, 01);
-                    invoice.DtFinal = new DateTime(2023, 07, 30);
-                    invoice.Total = sum;
-                    invoice.Expenses = expenses;
-                    invoice.InvoiceType = InvoiceType.CREDIT;
-                    invoice.InvoiceStatus = InvoiceStatus.PAID;
                 }
-            } 
-            catch (IOException e)
-            { 
-            
             }
-            return invoice;
+            catch (IOException e)
+            {
+
+            }
+            return movements;
         }
     }
 }
