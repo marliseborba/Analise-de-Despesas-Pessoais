@@ -19,11 +19,6 @@ namespace Expenses.Controllers
             return View();
         }
 
-        public IActionResult Upload()
-        {
-            return View();
-        }
-
         public IActionResult Privacy()
         {
             return View();
