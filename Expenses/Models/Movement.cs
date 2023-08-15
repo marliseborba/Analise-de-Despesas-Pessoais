@@ -1,10 +1,12 @@
 ﻿using Expenses.Models.Enums;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Expenses.Models
 {
-    public class Movement
+    public class Movement : IComparable
     {
+        [Key]
         public int Id { get; set; }
         public string Description { get; set; }
         public DateTime Date { get; set; }
@@ -12,10 +14,10 @@ namespace Expenses.Models
         public double Value { get; set; }
         public string Identifier { get; set; }
         public Owner Owner { get; set; }
-        public int OwnerId { get; set; }
+        public int? OwnerId { get; set; }
         public MovementType MovementType { get; set; }
         public Establishment Establishment { get; set; }
-        public int EstablishmentId { get; set; }
+        public int? EstablishmentId { get; set; }
 
         public Movement() 
         {
@@ -30,6 +32,41 @@ namespace Expenses.Models
             Identifier = identifier;
             Establishment = establishment;
         }
+        public Movement(string description, DateTime date, double value, string identifier, Owner owner, Establishment establishment)
+        {
+            Description = description;
+            Date = date;
+            Value = value;
+            Identifier = identifier;
+            Owner = owner;
+            Establishment = establishment;
+        }
+
+        public Movement(string description, DateTime date, double value, string identifier, Owner owner)
+        {
+            Description = description;
+            Date = date;
+            Value = value;
+            Identifier = identifier;
+            Owner = owner;
+        }
+
+        public Movement(string description, DateTime date, double value, string identifier, Establishment establishment)
+        {
+            Description = description;
+            Date = date;
+            Value = value;
+            Identifier = identifier;
+            Establishment = establishment;
+        }
+
+        public Movement(string description, DateTime date, double value, string identifier)
+        {
+            Description = description;
+            Date = date;
+            Value = value;
+            Identifier = identifier;
+        }
 
         public Movement(int id, string description, DateTime date, double value, string identifier)
         {
@@ -38,6 +75,23 @@ namespace Expenses.Models
             Date = date;
             Value = value;
             Identifier = identifier;
+        }
+
+        public int CompareTo(object? obj)
+        {
+            Movement other = (Movement)obj;
+            return Identifier.CompareTo(other.Identifier);
+        }
+
+        public override bool Equals(object? obj)
+        {
+            Movement other = obj as Movement;
+            return Identifier.Equals(other.Identifier);
+        }
+
+        public override int GetHashCode()
+        {
+            return Identifier.GetHashCode();
         }
     }
 }

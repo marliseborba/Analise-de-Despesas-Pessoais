@@ -1,7 +1,10 @@
-﻿namespace Expenses.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Expenses.Models
 {
     public class Category
     {
+        [Key]
         public int Id { get; set; }
         public string Name { get; set; }
         public ICollection<SubCategory> SubCategories { get; set; } = new List<SubCategory>();
@@ -12,6 +15,11 @@
         public Category(int id, string name)
         {
             Id = id;
+            Name = name;
+        }
+
+        public Category(string name)
+        {
             Name = name;
         }
 
