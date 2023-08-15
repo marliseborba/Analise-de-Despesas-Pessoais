@@ -9,6 +9,7 @@ namespace Expenses.Data
         public DbSet<SubCategory> SubCategory { get; set; }
         public DbSet<Establishment> Establishment { get; set; }
         public DbSet<Movement> Movement { get; set; }
+        public DbSet<Owner> Owner { get; set; }
 
         public ExpensesContext(DbContextOptions<ExpensesContext> options) : base(options)
         {
