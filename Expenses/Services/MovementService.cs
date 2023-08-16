@@ -36,9 +36,13 @@ namespace Expenses.Services
             _context.SaveChanges();
         }
 
-        public ICollection<Movement> GetMovements()
+        public List<IGrouping<Owner, Movement>> GetMovements()
         {
-            return _context.Movement.Include(x => x.Establishment).ToList();
+            return _context.Movement
+                    .Include(x => x.Establishment)
+                    .Include(x => x.Owner)
+                    .GroupBy(x => x.Owner)
+                    .ToList();
         }
 
         public ICollection<Movement> Upload(IList<IFormFile> files)
@@ -89,7 +93,15 @@ namespace Expenses.Services
         {
             ICollection<Movement> invoice = _memoryCache.Get("movs") as ICollection<Movement>;
             List<Movement> movements = _context.Movement.ToList();
+
+            /*
+            List<Movement> movements = _context.Movement
+                                        .Include(x => x.Owner)
+                                        .GroupBy(x => x.Owner).ToList();
+            */
+
             List<Movement> except = invoice.Except(movements).ToList();
+
 
             List<Movement> news = new List<Movement>();
 
