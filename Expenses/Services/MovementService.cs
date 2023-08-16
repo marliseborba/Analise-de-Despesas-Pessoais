@@ -46,6 +46,26 @@ namespace Expenses.Services
                     .ToList();
         }
 
+        public List<IGrouping<Owner, Movement>> FindByDate(DateTime? minDate, DateTime? maxDate) 
+        {
+            var result = from obj in _context.Movement select obj;
+            if (minDate.HasValue)
+            {
+                result = result.Where(x => x.Date >= minDate.Value);
+            }
+            if (maxDate.HasValue)
+            {
+                result = result.Where(x => x.Date <= maxDate.Value);
+            }
+
+            return result
+                .Include(x => x.Owner)
+                .Include(x => x.Establishment)
+                .OrderBy(x => x.Date)
+                .GroupBy(x => x.Owner)
+                .ToList();
+        }
+
         public ICollection<Movement> Upload(IList<IFormFile> files)
         {
             List<Movement> movements = new List<Movement>();

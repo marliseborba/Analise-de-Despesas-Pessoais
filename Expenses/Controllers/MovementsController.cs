@@ -26,6 +26,8 @@ namespace Expenses.Controllers
 
         public IActionResult Index()
         {
+            ViewData["minDate"] = new DateTime(DateTime.Now.Year, 1, 1).ToString("yyyy-MM-dd");
+            ViewData["maxDate"] = DateTime.Now.ToString("yyyy-MM-dd");
             return View(_movementService.GetMovements());
         }
 
@@ -46,6 +48,22 @@ namespace Expenses.Controllers
         public IActionResult SaveInvoice()
         {
             return RedirectToAction(nameof(Index), _movementService.SaveInvoice());
+        }
+
+        public IActionResult Search(DateTime? minDate, DateTime? maxDate)
+        {
+            if (!minDate.HasValue)
+            {
+                minDate = new DateTime(DateTime.Now.Year, 1, 1);
+            }
+            if (!maxDate.HasValue)
+            {
+                maxDate = DateTime.Now;
+            }
+            ViewData["minDate"] = minDate.Value.ToString("yyyy-MM-dd");
+            ViewData["maxDate"] = maxDate.Value.ToString("yyyy-MM-dd");
+            var result = _movementService.FindByDate(minDate, maxDate);
+            return View(nameof(Index), result);
         }
 
         [HttpPost]

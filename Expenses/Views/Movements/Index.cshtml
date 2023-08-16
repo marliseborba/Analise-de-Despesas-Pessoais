@@ -2,36 +2,60 @@
 
 @{
     ViewData["Title"] = "Movimentações";
+    DateTime minDate = DateTime.Parse(ViewData["minDate"] as string);
+    DateTime maxDate = DateTime.Parse(ViewData["maxDate"] as string);
 }
 <br />
 <br />
 <h2>@ViewData["Title"]</h2>
 <br />
 
+<div class="">
+    <form asp-action="Search">
+        <legend>Buscar: </legend>
+        <div class="row border-primary text-light">
+            <div class="col-md-6">
+                <label for="minDate" class="control-label">Início</label>
+                <input type="date" name="minDate" class="form-control" value=@ViewData["minDate"] />
+            </div>
+            <div class="col-md-6">
+            <label for="maxDate" class="control-label">Fim</label>
+                <input type="date" name="maxDate" class="form-control" value=@ViewData["maxDate"] />
+            </div>
+            <div>
+                <br />
+                <button type="submit" class="btn btn-secondary">Buscar</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<br />
+<br />
 <div class="accordion" id="accordionExample">
 @foreach (var owner in Model)
 {
     <div class="accordion-item">
-        <h2 class="accordion-header" id="headingOne">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-                <div class="col-md-3">
+        <h2 class="accordion-header" id=@("heading"+owner.Key.Id)>
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#X@(owner.Key.Id)"  aria-expanded="false" aria-controls="collapse @owner.Key.Id">
+                <div class="col-md-2">
                     <h4> @owner.Key.Name</h4>
                 </div>
-                <div class="col-md-2">
-                    Período: @owner.Key.GetMovements().FirstOrDefault().Date a @owner.Key.GetMovements().LastOrDefault().Date
+                <div class="col-md-3">
+                    Período: @owner.Key.GetMovements().FirstOrDefault().Date.ToString("dd/MM/yyyy") a @owner.Key.GetMovements().LastOrDefault().Date.ToString("dd/MM/yyyy")
                 </div>
                 <div class="col-md-2">
                     Movimentações: @owner.Key.GetMovements().Count()
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-2 text-success">
                     Entradas: @owner.Key.TotalReceipts().ToString("F2")
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-2 text-danger">
                     Saídas: @owner.Key.TotalExpenses().ToString("F2")
                 </div>
          </button>
       </h2>
-      <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample" style="">
+      <div id="X@(owner.Key.Id)"  class="accordion-collapse collapse" aria-labelledby=@("heading"+owner.Key.Id) data-bs-parent="#accordionExample" style="">
          <div class="accordion-body">
             <table class="table table-hover">
                 <thead>
