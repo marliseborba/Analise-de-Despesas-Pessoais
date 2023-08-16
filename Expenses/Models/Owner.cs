@@ -9,6 +9,7 @@ namespace Expenses.Models
         public string Name { get; set; }
         public string User { get; set; }
         public int Account { get; set; }
+        public IEnumerable<Movement> Movements { get; set; } = new List<Movement>();
 
         public Owner()
         { 
@@ -20,6 +21,22 @@ namespace Expenses.Models
             User = user;
             Account = account;
         }
+
+        public IEnumerable<Movement> GetMovements()
+        {
+            return Movements;
+        }  
+
+        public double TotalExpenses()
+        {
+            return Movements.Where(x => x.Value < 0.0).Sum(x => x.Value) * -1;
+        }
+
+        public double TotalReceipts()
+        {
+            return Movements.Where(x => x.Value > 0.0).Sum(x => x.Value);
+        }
+
         public int CompareTo(object? obj)
         {
             Owner other = (Owner)obj;

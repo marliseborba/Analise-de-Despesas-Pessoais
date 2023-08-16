@@ -41,6 +41,7 @@ namespace Expenses.Services
             return _context.Movement
                     .Include(x => x.Establishment)
                     .Include(x => x.Owner)
+                    .OrderBy(x => x.Date)
                     .GroupBy(x => x.Owner)
                     .ToList();
         }
