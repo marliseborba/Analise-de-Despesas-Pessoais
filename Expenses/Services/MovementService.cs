@@ -2,6 +2,7 @@
 using Expenses.Models;
 using System.Globalization;
 using Expenses.Data;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
@@ -115,14 +116,7 @@ namespace Expenses.Services
             ICollection<Movement> invoice = _memoryCache.Get("movs") as ICollection<Movement>;
             List<Movement> movements = _context.Movement.ToList();
 
-            /*
-            List<Movement> movements = _context.Movement
-                                        .Include(x => x.Owner)
-                                        .GroupBy(x => x.Owner).ToList();
-            */
-
             List<Movement> except = invoice.Except(movements).ToList();
-
 
             List<Movement> news = new List<Movement>();
 
@@ -132,7 +126,7 @@ namespace Expenses.Services
                 exp.Establishment = null;
                 news.Add(exp);
             }
-            
+
             _context.AddRange(news);
             _context.SaveChanges();
             return news;

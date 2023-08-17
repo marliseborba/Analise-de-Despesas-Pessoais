@@ -47,7 +47,9 @@ namespace Expenses.Controllers
 
         public IActionResult SaveInvoice()
         {
-            return RedirectToAction(nameof(Index), _movementService.SaveInvoice());
+            var saves = _movementService.SaveInvoice();
+            TempData["saved"] = saves.Count;
+            return RedirectToAction(nameof(Index), saves);
         }
 
         public IActionResult Search(DateTime? minDate, DateTime? maxDate)
