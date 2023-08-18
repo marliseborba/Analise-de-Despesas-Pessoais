@@ -1,0 +1,27 @@
+﻿@model Expenses.Models.Category
+
+@{
+    ViewData["Title"] = "Categorias";
+}
+
+<br />
+<br />
+<h2>@ViewData["Title"]</h2>
+<br />
+
+<div class="container">
+    <form asp-action="Create">
+        <legend>Cadastrar: </legend>
+        <div class="row border-primary">
+            <div class="col-md-6">
+                <label asp-for="Name" class="control-label">Nome</label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div>
+                <br />
+                <button type="submit" class="btn btn-secondary">Salvar</button>
+            </div>
+        </div>
+    </form>
+</div>
