@@ -25,7 +25,8 @@ namespace Expenses.Controllers
         }
 
         public IActionResult Index()
-        {
+        {   
+            _seedingService.Seed();
             ViewData["minDate"] = new DateTime(DateTime.Now.Year, 1, 1).ToString("yyyy-MM-dd");
             ViewData["maxDate"] = DateTime.Now.ToString("yyyy-MM-dd");
             return View(_movementService.GetMovements());
@@ -48,8 +49,9 @@ namespace Expenses.Controllers
         public IActionResult SaveInvoice()
         {
             var saves = _movementService.SaveInvoice();
+            _movementService.UpdateEstablishments();
             TempData["saved"] = saves.Count;
-            return RedirectToAction(nameof(Index), saves);
+            return RedirectToAction(nameof(Index));
         }
 
         public IActionResult Search(DateTime? minDate, DateTime? maxDate)

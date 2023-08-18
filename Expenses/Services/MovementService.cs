@@ -41,6 +41,7 @@ namespace Expenses.Services
         {
             return _context.Movement
                     .Include(x => x.Establishment)
+                    .ThenInclude(x => x.Category)
                     .Include(x => x.Owner)
                     .OrderBy(x => x.Date)
                     .GroupBy(x => x.Owner)
@@ -75,7 +76,7 @@ namespace Expenses.Services
             {
                 foreach (var file in files)
                 {
-                    var own = CheckOwner(file.FileName);
+                    Owner own = CheckOwner(file.FileName);
                     using (StreamReader sr = new StreamReader(file.OpenReadStream()))
                     {
                         int count = 1;
@@ -91,10 +92,6 @@ namespace Expenses.Services
                             string description = attributes[3];
                             Establishment estab = CheckEstab(description);
                             Movement exp = new Movement(description, date, value, identifier, own, estab);
-                            if (estab != null)
-                            {
-                                exp.EstablishmentId = estab.Id;
-                            }
                             exp.OwnerId = own.Id;
                             sum += value;
                             count++;
@@ -118,18 +115,15 @@ namespace Expenses.Services
 
             List<Movement> except = invoice.Except(movements).ToList();
 
-            List<Movement> news = new List<Movement>();
-
-            foreach (Movement exp in except)
+            foreach (Movement mov in except)
             {
-                exp.Owner = null;
-                exp.Establishment = null;
-                news.Add(exp);
+                mov.Establishment = null;
+                mov.Owner = null;
             }
 
-            _context.AddRange(news);
+            _context.AddRange(except);
             _context.SaveChanges();
-            return news;
+            return except;
         }
 
         public Establishment CheckEstab(string description)
@@ -159,6 +153,24 @@ namespace Expenses.Services
                 }
             }
             return null;
+        }
+
+        public ICollection<Movement> UpdateEstablishments()
+        {
+            var movements = _context.Movement.ToList();
+            var updated = new List<Movement>();
+            foreach (Movement item in movements) 
+            {
+                var estab = CheckEstab(item.Description);
+                if (estab != null) 
+                {
+                    item.EstablishmentId = estab.Id;
+                    _context.Update(item);
+                    updated.Add(item);
+                }
+            }
+            _context.SaveChanges();
+            return updated;
         }
     }
 }

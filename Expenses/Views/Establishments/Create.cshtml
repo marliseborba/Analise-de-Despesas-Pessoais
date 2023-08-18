@@ -1,0 +1,42 @@
+﻿@model Expenses.Models.ViewModels.EstablishmentViewModel
+
+@{
+    ViewData["Title"] = "Estabelecimentos";
+}
+<br />
+<br />
+<h2>@ViewData["Title"]</h2>
+<br />
+
+<div class="container">
+    <form asp-action="Create">
+        <legend>Cadastrar: </legend>
+        <div class="row border-primary">
+            <div class="col-md-6">
+                <label asp-for="Establishment.Name" class="control-label">Nome</label>
+                <input asp-for="Establishment.Name" class="form-control" />
+                <span asp-validation-for="Establishment.Name" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="Establishment.Description" class="control-label">Descrição</label>
+                <input asp-for="Establishment.Description" class="form-control" placeholder="Palavra-chave que aparece na fatura, por ex., 'Supermercado Nacional'" onfocus="this.placeholder=''" />
+                <span asp-validation-for="Establishment.Description" class="text-danger"></span>
+            </div>
+            
+            <div class="col-md-6">
+                <br />
+                <label asp-for="Establishment.CategoryId" class="control-label">Categoria</label>
+                <select asp-for="Establishment.CategoryId" asp-items="@(new SelectList(Model.Categories,"Id","Name"))" class="form-control"><option value="">Selecione...</option></select>
+            </div>
+            <div class="col-md-6">
+                <br />
+                <label asp-for="Establishment.SubCategoryId" class="control-label">Sub Categoria</label>
+                <select asp-for="Establishment.SubCategoryId" asp-items="@(new SelectList(Model.SubCategories,"Id","Name"))" class="form-control"><option value="">Selecione...</option></select>
+            </div>
+            <div>
+                <br />
+                <button type="submit" class="btn btn-secondary">Salvar</button>
+            </div>
+        </div>
+    </form>
+</div>
