@@ -1,0 +1,84 @@
+﻿@model IEnumerable<Expenses.Models.KeyWord>
+
+@{
+    ViewData["Title"] = "Palavras-chave";
+}
+
+<br />
+<br />
+<h2><i class="bi bi-key-fill"></i> @ViewData["Title"]</h2>
+<br />
+
+<input type="button" onclick="location.href='@Url.Action("Create", "Keywords")'" class="btn btn-primary" value="Criar Palavras-chave" />
+<br />
+<br />
+
+@if (TempData.ContainsKey("created"))
+{
+    int created = (int)TempData["created"];
+    if (created > 0)
+    {
+        <div class="alert alert-dismissible alert-success">
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            @if (created == 1)
+            {
+                <span><strong>@TempData["created"] </strong> Palavra-chave foi criada.</span>
+            }
+            else
+            {
+                <span><strong>@TempData["created"] </strong> Palavras-Chave foram criadas.</span>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-dismissible alert-warning">
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <span>Nenhuma palavra-chave foi criada.</span>
+        </div>
+    }
+}
+
+@if (TempData.ContainsKey("updated"))
+{
+    string updated = (string)TempData["updated"];
+    if (updated != null)
+    {
+        <div class="alert alert-dismissible alert-success">
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <span>A Palavra-chave <strong>@TempData["updated"] </strong> foi atualizada.</span>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-dismissible alert-warning">
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <span>Nenhuma palavra-chave foi atualizada.</span>
+        </div>
+    }
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Descrição
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id"><i class="bi bi-pencil-square" style="color: white;"></i></a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id"><i class="bi bi-trash3-fill" style="color: white;"></i></a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

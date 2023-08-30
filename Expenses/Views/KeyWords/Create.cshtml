@@ -1,0 +1,27 @@
+﻿@model Expenses.Models.ViewModels.KeyWordViewModel
+
+@{
+    ViewData["Title"] = "Palavras-Chave";
+}
+
+<br />
+<br />
+<h2>@ViewData["Title"]</h2>
+<br />
+
+<div class="container">
+    <form asp-action="Create">
+        <legend>Cadastrar: </legend>
+        <div class="row border-primary">
+            <div class="col-md-6">
+                <label asp-for="Keys" class="control-label">Nome</label>
+                <input asp-for="Keys" class="form-control" placeholder="Digite as palavras separadas por vírgula e sem espaço"/>
+                <span asp-validation-for="Keys" class="text-danger"></span>
+            </div>
+            <div>
+                <br />
+                <button type="submit" class="btn btn-secondary">Salvar</button>
+            </div>
+        </div>
+    </form>
+</div>

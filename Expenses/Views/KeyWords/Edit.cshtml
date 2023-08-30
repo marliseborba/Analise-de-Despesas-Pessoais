@@ -1,0 +1,26 @@
+﻿@model Expenses.Models.ViewModels.KeyWordViewModel
+
+@{
+    ViewData["Title"] = "Editar Palavra-Chave";
+}
+<br />
+<br />
+<h2>@ViewData["Title"]</h2>
+<br />
+
+<div class="container">
+    <form asp-action="Edit">
+        <legend>Editar: </legend>
+        <input type="hidden" asp-for="KeyWord.Id" />
+        <div class="row border-primary">
+            <div class="col-md-6">
+                <label asp-for="KeyWord.Description" class="control-label">Descrição</label>
+                <input asp-for="KeyWord.Description" class="form-control" />
+            </div>
+            <div>
+                <br />
+                <button type="submit" class="btn btn-secondary">Salvar</button>
+            </div>
+        </div>
+    </form>
+</div>
