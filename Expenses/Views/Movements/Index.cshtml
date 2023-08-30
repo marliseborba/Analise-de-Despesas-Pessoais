@@ -1,33 +1,61 @@
-﻿@model IEnumerable<IGrouping<Owner, Movement>>
+﻿@model Expenses.Models.ViewModels.MovementViewModel
 
 @{
     ViewData["Title"] = "Movimentações";
-    DateTime minDate = DateTime.Parse(ViewData["minDate"] as string);
-    DateTime maxDate = DateTime.Parse(ViewData["maxDate"] as string);
 }
 <br />
 <br />
-<h2>@ViewData["Title"]</h2>
+<h2><i class="fa-solid fa-money-bill-transfer"></i> @ViewData["Title"]</h2>
 <br />
 
+<p class="d-inline-flex gap-1">
+    <a class="btn btn-primary collapsed" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+        <i class="bi bi-search"></i> Buscar
+    </a>
+</p>
+<div class="collapse" id="collapseExample">
+    <div class="card card-body">
+        <form asp-action="SearchMovements">
+            <div class="row border-primary text-light">
+                <div class="col-md-6">
+                    <label asp-for="MinDate" class="control-label">Início</label>
+                    <input type="date" asp-for="MinDate" class="form-control" value="@Model.MinDate.ToString("yyyy-MM-dd")" />
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="MaxDate" class="control-label">Fim</label>
+                    <input type="date" asp-for="MaxDate" class="form-control" value="@Model.MaxDate.ToString("yyyy-MM-dd")" />
+                </div>
+                <div class="col-md-6">
+                    <br />
+                    <label asp-for="Owner.Name" class="control-label"><i class="fa-solid fa-user"></i> Autora</label>
+                    <select asp-for="Owner.Name" asp-items="@(new SelectList(Model.Owners,"Name","Name"))" class="form-control"><option>Selecione...</option></select>
+                </div>
+                <div class="col-md-6">
+                    <br />
+                    <label asp-for="Establishment.Name" class="control-label"><i class="bi bi-shop-window"></i> Estabelecimento</label>
+                    <select asp-for="Establishment.Name" asp-items="@(new SelectList(Model.Establishments,"Name","Name"))" class="form-control"><option>Selecione...</option></select>
+                </div>
+                <div class="col-md-6">
+                    <br />
+                    <label asp-for="Category.Name" class="control-label"><i class="bi bi-tags"></i> Categoria</label>
+                    <select asp-for="Category.Name" asp-items="@(new SelectList(Model.Categories,"Name","Name"))" class="form-control"><option>Selecione...</option></select>
+                </div>
+                <div class="col-md-6">
+                    <br />
+                    <label asp-for="SubCategory.Name" class="control-label">Sub Categoria</label>
+                    <select asp-for="SubCategory.Name" asp-items="@(new SelectList(Model.SubCategories,"Name","Name"))" class="form-control"><option>Selecione...</option></select>
+                </div>
+                <div>
+                    <br />
+                    <button type="submit" class="btn btn-secondary">Buscar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
 <div class="">
-    <form asp-action="Search">
-        <legend>Buscar: </legend>
-        <div class="row border-primary text-light">
-            <div class="col-md-6">
-                <label for="minDate" class="control-label">Início</label>
-                <input type="date" name="minDate" class="form-control" value=@ViewData["minDate"] />
-            </div>
-            <div class="col-md-6">
-            <label for="maxDate" class="control-label">Fim</label>
-                <input type="date" name="maxDate" class="form-control" value=@ViewData["maxDate"] />
-            </div>
-            <div>
-                <br />
-                <button type="submit" class="btn btn-secondary">Buscar</button>
-            </div>
-        </div>
-    </form>
+
 </div>
 <br />
 <br />
@@ -51,89 +79,100 @@
     else
     {
         <div class="alert alert-dismissible alert-warning">
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             <span>Nenhuma movimentação foi salva.</span>
         </div>
     }
 }
 
-<br />
-<div class="accordion" id="accordionExample">
-@foreach (var owner in Model)
+@if (TempData.ContainsKey("catUpdated"))
 {
-    <div class="accordion-item">
-        <h2 class="accordion-header" id=@("heading"+owner.Key.Id)>
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#X@(owner.Key.Id)"  aria-expanded="false" aria-controls="collapse @owner.Key.Id">
-                <div class="col-md-2">
-                    <h4> @owner.Key.Name</h4>
-                </div>
-                <div class="col-md-3">
-                    Período: @owner.Key.GetMovements().FirstOrDefault().Date.ToString("dd/MM/yyyy") a @owner.Key.GetMovements().LastOrDefault().Date.ToString("dd/MM/yyyy")
-                </div>
-                <div class="col-md-2">
-                    Movimentações: @owner.Key.GetMovements().Count()
-                </div>
-                <div class="col-md-2 text-success">
-                    Entradas: @owner.Key.TotalReceipts().ToString("F2")
-                </div>
-                <div class="col-md-2 text-danger">
-                    Saídas: @owner.Key.TotalExpenses().ToString("F2")
-                </div>
-         </button>
-      </h2>
-      <div id="X@(owner.Key.Id)"  class="accordion-collapse collapse" aria-labelledby=@("heading"+owner.Key.Id) data-bs-parent="#accordionExample" style="">
-         <div class="accordion-body">
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>
-                            Id
-                        </th>
-                        <th>
-                            Descrição
-                        </th>
-                        <th>
-                            Data
-                        </th>
-                        <th>
-                            Valor
-                        </th>
-                        <th>
-                            Identificador
-                        </th>
-                        <th>
-                            Estabelecimento
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in owner)
-                    {
-                        <tr>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Id)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Description)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Date)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Value)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Identifier)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Establishment.Name)
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-         </div>
-      </div>
-   </div>
+    int catUpdated = (int)TempData["catUpdated"];
+    if (catUpdated > 0)
+    {
+        <div class="alert alert-dismissible alert-success">
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            @if (catUpdated == 1)
+            {
+                <span><strong>@TempData["catUpdated"] </strong> movimentação teve Categorias atualizadas.</span>
+            }
+            else
+            {
+                <span><strong>@TempData["catUpdated"] </strong> movimentações tiveram Categorias atualizadas.</span>
+            }
+        </div>
+    }
 }
-</div>
+
+<table class="table">
+    <tr class="table-default">
+        <th>
+            Movimentações: @Model.Movements.Count()
+        </th>
+        <th class="text-success">
+            Entradas: @Model.Movements.Where(x => x.Value > 0).Sum(x => x.Value).ToString("F2")
+        </th>
+        <th class="text-danger">
+            Saídas: @Model.Movements.Where(x => x.Value < 0).Sum(x => x.Value).ToString("F2")
+        </th>
+    </tr>
+</table>
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>
+                Autora
+            </th>
+            <th>
+                Descrição
+            </th>
+            <th>
+                Data
+            </th>
+            <th>
+                Valor
+            </th>
+            <th>
+                Estabelecimento
+            </th>
+            <th>
+                Categorias
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Movements)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Owner.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Date)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Value)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Establishment.Name)
+                </td>
+                <td>@{  var count = 1;
+                        foreach(var i in item.Categories)
+                        {
+                            if (count < item.Categories.Count)
+                                @($"{i.Name}{", "}")
+                            else
+                                @i.Name;
+                            count++;
+                        }
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+

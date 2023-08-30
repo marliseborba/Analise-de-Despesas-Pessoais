@@ -6,21 +6,43 @@
 
 <br />
 <br />
-<h2>@ViewData["Title"]</h2>
+<h2><i class="bi bi-tags"></i> @ViewData["Title"]</h2>
 <br />
 
-<p>
-    <a asp-action="Create">Criar Categoria</a>
-</p>
+<input type="button" onclick="location.href='@Url.Action("Create", "Categories")'" class="btn btn-primary" value="Criar Categoria" />
+<br />
+<br />
+
+@if (TempData.ContainsKey("updated"))
+{
+    string updated = (string)TempData["updated"];
+    if (updated != null)
+    {
+        <div class="alert alert-dismissible alert-success">
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <span>A categoria <strong>@TempData["updated"] </strong> foi atualizada.</span>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-dismissible alert-warning">
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <span>Nenhuma categoria foi atualizada.</span>
+        </div>
+    }
+}
 
 <table class="table">
     <thead>
         <tr>
-            <th>
-                Id
+            <th width="30">
+                
             </th>
             <th>
                 Nome
+            </th>
+            <th>
+                Palavras-chave
             </th>
             <th></th>
         </tr>
@@ -30,14 +52,29 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Id)
+                    <i class="@item.Icon" style="color: white;"></i>
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Name)
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Excluir</a>
+                    @{
+                        var count = 1;
+                        foreach (var i in item.KeyWords)
+                        {
+                            if (count < item.KeyWords.Count)
+                                @($"{"\u0022"}{i.Description}{"\u0022, "}")
+                            else
+                            {
+                                @($"{"\u0022"}{i.Description}{"\u0022"}")
+                            }
+                            count++;
+                        }
+                    }
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id"><i class="bi bi-pencil-square" style="color: white;"></i></a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id"><i class="bi bi-trash3-fill" style="color: white;"></i></a>
                 </td>
             </tr>
         }

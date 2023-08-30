@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "Estabelecimentos";
 }
+
 <br />
 <br />
 <h2>@ViewData["Title"]</h2>
@@ -18,20 +19,11 @@
                 <span asp-validation-for="Establishment.Name" class="text-danger"></span>
             </div>
             <div class="col-md-6">
-                <label asp-for="Establishment.Description" class="control-label">Descrição</label>
-                <input asp-for="Establishment.Description" class="form-control" placeholder="Palavra-chave que aparece na fatura, por ex., 'Supermercado Nacional'" onfocus="this.placeholder=''" />
-                <span asp-validation-for="Establishment.Description" class="text-danger"></span>
-            </div>
-            
-            <div class="col-md-6">
-                <br />
-                <label asp-for="Establishment.CategoryId" class="control-label">Categoria</label>
-                <select asp-for="Establishment.CategoryId" asp-items="@(new SelectList(Model.Categories,"Id","Name"))" class="form-control"><option value="">Selecione...</option></select>
-            </div>
-            <div class="col-md-6">
-                <br />
-                <label asp-for="Establishment.SubCategoryId" class="control-label">Sub Categoria</label>
-                <select asp-for="Establishment.SubCategoryId" asp-items="@(new SelectList(Model.SubCategories,"Id","Name"))" class="form-control"><option value="">Selecione...</option></select>
+                <label class="control-label"></i> Palavras-chave</label><br />
+                @foreach (KeyWord key in Model.KeyWords)
+                {
+                    <input type="checkbox" id="SelectedKeys" name="Keys" value="@key.Id" /> @key.Description <br />
+                }
             </div>
             <div>
                 <br />
@@ -40,3 +32,24 @@
         </div>
     </form>
 </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js" type="text/javascript"></script>
+
+<script>
+    $('#SelectedKeys').change(function (e) {
+        var optionsVal = [];
+        $("#SelectedKeys option").each(function () {
+            optionsVal.push($(this).val());
+        });
+        $.ajax({
+            type: 'POST',
+            url: '/Home/submit',
+            traditional: true,
+            dataType: "json",
+            data: { SelectedSortOrderOptions: optionsVal },
+            success: function () {
+
+            },
+        });
+    });
+</script>

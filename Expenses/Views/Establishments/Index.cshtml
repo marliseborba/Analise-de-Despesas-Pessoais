@@ -6,30 +6,43 @@
 
 <br />
 <br />
-<h2>@ViewData["Title"]</h2>
+<h2><i class="bi bi-shop-window"></i> @ViewData["Title"]</h2>
 <br />
 
-<p>
-    <a asp-action="Create">Criar Estabelecimento</a>
-</p>
+<input type="button" onclick="location.href='@Url.Action("Create", "Establishments")'" class="btn btn-primary" value="Criar Estabelecimento" />
+<br />
+<br />
+
+@if (TempData.ContainsKey("updated"))
+{
+    string updated = (string)TempData["updated"];
+    if (updated != null)
+    {
+        <div class="alert alert-dismissible alert-success">
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <span>O estabelecimento <strong>@TempData["updated"] </strong> foi atualizado.</span>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-dismissible alert-warning">
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <span>Nenhum estabelecimento foi atualizado.</span>
+        </div>
+    }
+}
+
 
 <table class="table">
     <thead>
         <tr>
             <th>
-                Id
             </th>
             <th>
                 Nome
             </th>
             <th>
-                Descrição
-            </th>
-            <th>
-                Categoria
-            </th>
-            <th>
-                Sub Categoria
+                Palavras-chave
             </th>
             <th></th>
         </tr>
@@ -39,23 +52,29 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Id)
+                    <i class="@item.Icon" style="color: white;"></i>
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Name)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Description)
+                    @{
+                        var count = 1;
+                        foreach (var i in item.KeyWords)
+                        {
+                            if (count < item.KeyWords.Count)
+                                @($"{"\u0022"}{i.Description}{"\u0022, "}")
+                            else
+                            {
+                                @($"{"\u0022"}{i.Description}{"\u0022"}")
+                            }
+                            count++;
+                        }
+                    }
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Category.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.SubCategory.Name)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Excluir</a>
+                    <a asp-action="Edit" asp-route-id="@item.Id"><i class="bi bi-pencil-square" style="color: white;"></i></a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id"><i class="bi bi-trash3-fill" style="color: white;"></i></a>
                 </td>
             </tr>
         }

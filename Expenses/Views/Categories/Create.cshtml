@@ -1,4 +1,4 @@
-﻿@model Expenses.Models.Category
+﻿@model Expenses.Models.ViewModels.CategoryViewModel
 
 @{
     ViewData["Title"] = "Categorias";
@@ -14,9 +14,16 @@
         <legend>Cadastrar: </legend>
         <div class="row border-primary">
             <div class="col-md-6">
-                <label asp-for="Name" class="control-label">Nome</label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
+                <label asp-for="Category.Name" class="control-label">Nome</label>
+                <input asp-for="Category.Name" class="form-control" />
+                <span asp-validation-for="Category.Name" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+                <label class="control-label"></i> Palavras-chave</label><br />
+                @foreach (KeyWord key in Model.KeyWords)
+                {
+                    <input type="checkbox" id="SelectedKeys" name="Keys" value="@key.Id" /> @key.Description <br />
+                }
             </div>
             <div>
                 <br />
