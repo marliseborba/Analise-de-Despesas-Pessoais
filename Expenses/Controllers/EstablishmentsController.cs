@@ -14,62 +14,57 @@ namespace Expenses.Controllers
         private readonly MovementService _movementService;
         private readonly CategoryService _categoryService;
         private readonly SubCategoryService _subCategoryService;
+        private readonly KeyWordService _keyWordService;
 
         public EstablishmentsController(SeedingService seedService,
                                         EstablishmentService establishmentService,
                                         MovementService movementService,
                                         CategoryService categoryService,
-                                        SubCategoryService subCategoryService)
+                                        SubCategoryService subCategoryService,
+                                        KeyWordService keyWordService)
         {
             _seedService = seedService;
             _establishmentService = establishmentService;
             _movementService = movementService;
             _categoryService = categoryService;
             _subCategoryService = subCategoryService;
+            _keyWordService = keyWordService;
         }
 
         public IActionResult Index()
         {
+            //_movementService.UpdateEstablishments();
             return View(_establishmentService.GetEstablishments());
         }
 
         public IActionResult Create()
         {
-            var establishments = _establishmentService.GetEstablishments();
-            var categories = _categoryService.GetCategories();
-            var subCategories = _subCategoryService.GetSubCategories();
-
             var viewModel = new EstablishmentViewModel
             {
-                Establishments = establishments,
-                Categories = categories,
-                SubCategories = subCategories
+                KeyWords = _keyWordService.GetKeyWords().ToList()
             };
             return View(viewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Establishment establishment)
+        public IActionResult Create(Establishment establishment, List<int> keys)
         {
             if (!ModelState.IsValid)
             {
-                var categories = _categoryService.GetCategories();
-                var subCategories = _subCategoryService.GetSubCategories();
                 var viewModel = new EstablishmentViewModel
                 {
                     Establishment = establishment,
-                    Categories = categories,
-                    SubCategories = subCategories
-                };
+                    KeyWords = _keyWordService.GetKeyWords().ToList()
+            };
                 return View(viewModel);
             }
-            _establishmentService.Insert(establishment);
+            _establishmentService.Insert(establishment, keys);
             _movementService.UpdateEstablishments();
             return RedirectToAction(nameof(Index));
         }
 
-        public IActionResult Edit(int? id) 
+        public IActionResult Edit(int? id)
         {
             if (id == null)
             {
@@ -80,34 +75,21 @@ namespace Expenses.Controllers
             {
                 return RedirectToAction(nameof(Error), new { message = "Id não encontrado" });
             }
-
-            var establishments = _establishmentService.GetEstablishments();
-            var categories = _categoryService.GetCategories();
-            var subCategories = _subCategoryService.GetSubCategories();
-
-            var viewModel = new EstablishmentViewModel
-            {
-                Establishment = obj,
-                Establishments = establishments,
-                Categories = categories,
-                SubCategories = subCategories
-            };
+            EstablishmentViewModel viewModel = new EstablishmentViewModel();
+            viewModel.Establishment = obj;
+            viewModel.KeyWords = _keyWordService.GetKeyWords().ToList();
             return View(viewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Establishment establishment)
+        public async Task<IActionResult> Edit(int id, Establishment establishment, List<int> keys)
         {
             if (!ModelState.IsValid)
             {
-                var categories = _categoryService.GetCategories();
-                var subCategories = _subCategoryService.GetSubCategories();
                 var viewModel = new EstablishmentViewModel
                 {
-                    Establishment = establishment,
-                    Categories = categories,
-                    SubCategories = subCategories
+                    Establishment = establishment
                 };
                 return View(viewModel);
             }
@@ -117,7 +99,8 @@ namespace Expenses.Controllers
             }
             try
             {
-                _establishmentService.Update(establishment);
+                var updated = _establishmentService.Update(establishment, keys);
+                TempData["updated"] = updated.Name;
                 _movementService.UpdateEstablishments();
                 return RedirectToAction(nameof(Index));
             }

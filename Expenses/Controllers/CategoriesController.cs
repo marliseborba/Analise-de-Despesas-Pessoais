@@ -13,30 +13,50 @@ namespace Expenses.Controllers
         private readonly SeedingService _seedService;
         private readonly CategoryService _categoryService;
         private readonly MovementService _movementService;
+        private readonly KeyWordService _keyWordService;
 
-        public CategoriesController(ExpensesContext expensesContext, SeedingService seedService, CategoryService categoryService, MovementService movementService)
+        public CategoriesController(ExpensesContext expensesContext,
+            SeedingService seedService,
+            CategoryService categoryService,
+            MovementService movementService,
+            KeyWordService keyWordService)
         {
             _context = expensesContext;
             _seedService = seedService;
             _categoryService = categoryService;
             _movementService = movementService;
+            _keyWordService = keyWordService;
         }
 
         public IActionResult Index()
         {
-            //_seedService.Seed();
+            _movementService.UpdateCategories();
             return View(_categoryService.GetCategories().ToList());
         }
 
         public IActionResult Create() 
         {
-            return View();
+            var viewModel = new CategoryViewModel
+            {
+                KeyWords = _keyWordService.GetKeyWords().ToList()
+            };
+            return View(viewModel);
         }
 
         [HttpPost]
-        public IActionResult Create(Category category) 
+        [ValidateAntiForgeryToken]
+        public IActionResult Create(Category category, List<int> keys) 
         {
-            _categoryService.Insert(category);
+            if (!ModelState.IsValid)
+            {
+                var viewModel = new CategoryViewModel
+                {
+                    Category = category,
+                    KeyWords = _keyWordService.GetKeyWords().ToList()
+                };
+                return View(viewModel);
+            }
+            _categoryService.Insert(category, keys);
             return RedirectToAction(nameof(Index));
         }
 
@@ -51,16 +71,23 @@ namespace Expenses.Controllers
             {
                 return RedirectToAction(nameof(Error), new { message = "Id não encontrado" });
             }
-            return View(obj);
+            CategoryViewModel viewModel = new CategoryViewModel();
+            viewModel.Category = obj;
+            viewModel.KeyWords = _context.KeyWord.ToList();
+            //viewModel.Keys = obj.Keys.ToList();
+            return View(viewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Category category)
+        public async Task<IActionResult> Edit(int id, Category category, List<int> keys)
         {
             if (!ModelState.IsValid)
             {
-                return View(category);
+                CategoryViewModel viewModel = new CategoryViewModel();
+                viewModel.Category = category;
+                viewModel.KeyWords = _context.KeyWord.ToList();
+                return View(viewModel);
             }
             if (id != category.Id)
             {
@@ -68,7 +95,8 @@ namespace Expenses.Controllers
             }
             try
             {
-                _categoryService.Update(category);
+                var updated = _categoryService.Update(category, keys);
+                TempData["updated"] = updated.Name;
                 _movementService.UpdateEstablishments();
                 return RedirectToAction(nameof(Index));
             }

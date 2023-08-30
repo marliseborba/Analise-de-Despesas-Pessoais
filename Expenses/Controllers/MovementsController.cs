@@ -1,5 +1,6 @@
 ﻿using Expenses.Data;
 using Expenses.Models;
+using Expenses.Models.ViewModels;
 using Expenses.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
@@ -16,41 +17,72 @@ namespace Expenses.Controllers
         private readonly IMemoryCache _memoryCache;
         private readonly SeedingService _seedingService;
         private readonly MovementService _movementService;
+        private readonly CategoryService _categoryService;
+        private readonly SubCategoryService _subCategoryService;
+        private readonly EstablishmentService _establishmentService;
+        private readonly OwnerService _ownerService;
 
-        public MovementsController(IMemoryCache memoryCache, SeedingService seedingService, MovementService movementService)
+        public MovementsController(IMemoryCache memoryCache,
+            SeedingService seedingService,
+            MovementService movementService,
+            CategoryService categoryService,
+            SubCategoryService subCategoryService,
+            EstablishmentService establishmentService,
+            OwnerService ownerService)
         {
             _memoryCache = memoryCache;
             _seedingService = seedingService;
             _movementService = movementService;
+            _categoryService = categoryService;
+            _subCategoryService = subCategoryService;
+            _establishmentService = establishmentService;
+            _ownerService = ownerService;
         }
 
         public IActionResult Index()
-        {   
-            _seedingService.Seed();
-            ViewData["minDate"] = new DateTime(DateTime.Now.Year, 1, 1).ToString("yyyy-MM-dd");
-            ViewData["maxDate"] = DateTime.Now.ToString("yyyy-MM-dd");
-            return View(_movementService.GetMovements());
+        {
+            _seedingService.SeedInitial();
+            _movementService.UpdateEstablishments();
+            //var catUpdated = _movementService.UpdateCategories();
+            //TempData["catUpdated"] = catUpdated.Count;
+            var viewModel = new MovementViewModel
+            {
+                Movements = _movementService.GetMovementsNoGrouping()
+            };
+
+            _movementService.PopulateViewModel(viewModel);
+
+            return View("Index", viewModel);
+        }
+
+        public IActionResult SearchMovements(MovementViewModel viewModel)
+        {
+            viewModel.Movements = _movementService.SearchMovements(viewModel);
+            _movementService.PopulateViewModel(viewModel);
+            return View("Index", viewModel);
         }
 
         public IActionResult Upload()
         {
+            //_seedingService.Seed();
+            //_movementService.UpdateEstablishments();
             return View();
         }
 
         [HttpPost]
         public IActionResult Upload(IList<IFormFile> files)
         {
-            _movementService._memoryCache.Set("file", files);
-            List<Movement> movs = _movementService.Upload(files).ToList();
+            _movementService._memoryCache.Set("files", files);
+            List<Movement> movs = _movementService.UploadExtract(files).ToList();
             return View(movs);
         }
-
 
         public IActionResult SaveInvoice()
         {
             var saves = _movementService.SaveInvoice();
-            _movementService.UpdateEstablishments();
             TempData["saved"] = saves.Count;
+            _movementService.UpdateEstablishments();
+            _movementService.UpdateCategories();
             return RedirectToAction(nameof(Index));
         }
 
@@ -76,9 +108,9 @@ namespace Expenses.Controllers
             _movementService.Insert(movement);
         }
 
-        public void Edit(Movement movement) 
+        public void Edit(Movement movement)
         {
-            
+
         }
 
         [HttpPost]
