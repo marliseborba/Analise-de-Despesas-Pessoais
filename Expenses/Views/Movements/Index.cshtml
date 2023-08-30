@@ -3,6 +3,31 @@
 @{
     ViewData["Title"] = "Movimentações";
 }
+<script type="text/javascript" charset="utf-8">
+    $(document).ready(function () {
+        $('#myTable').dataTable({
+            "language": {
+                "info": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+                "infoEmpty": "Mostrando 0 to 0 of 0 registros",
+                "infoFiltered": "(filtrado de _MAX_ registros)",
+                "lengthMenu": "Mostrar _MENU_ registros",
+                "search": "Buscar:",
+                "paginate": {
+                    "first": "Primeira",
+                    "last": "Última",
+                    "next": "Próxima",
+                    "previous": "Anterior"
+                },
+                "aria": {
+                    "sortAscending": ": clique para ordenar crescente",
+                    "sortDescending": ": clique para ordenar decrescente"
+                }
+            },
+
+        });
+    });
+</script>
+
 <br />
 <br />
 <h2><i class="fa-solid fa-money-bill-transfer"></i> @ViewData["Title"]</h2>
@@ -118,7 +143,7 @@
     </tr>
 </table>
 
-<table class="table table-hover">
+<table id="myTable" class="table table-hover">
     <thead>
         <tr>
             <th>
@@ -164,9 +189,9 @@
                         foreach(var i in item.Categories)
                         {
                             if (count < item.Categories.Count)
-                                @($"{i.Name}{", "}")
+                                        @($"{i.Name}{", "}")
                             else
-                                @i.Name;
+                                        @i.Name;
                             count++;
                         }
                     }

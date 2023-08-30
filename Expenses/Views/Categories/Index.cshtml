@@ -4,6 +4,36 @@
     ViewData["Title"] = "Categorias";
 }
 
+<script type="text/javascript" charset="utf-8">
+    $(document).ready(function () {
+        $('#myTable').dataTable({
+            "language": {
+                "info": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+                "infoEmpty": "Mostrando 0 to 0 of 0 registros",
+                "infoFiltered": "(filtrado de _MAX_ registros)",
+                "lengthMenu": "Mostrar _MENU_ registros",
+                "search": "Buscar:",
+                "paginate": {
+                    "first": "Primeira",
+                    "last": "Última",
+                    "next": "Próxima",
+                    "previous": "Anterior"
+                },
+                "aria": {
+                    "sortAscending": ": clique para ordenar crescente",
+                    "sortDescending": ": clique para ordenar decrescente"
+                }
+            },
+
+            "columnDefs": [{
+                "targets": [0, 3],
+                "orderable": false
+            }]
+
+        });
+    });
+</script>
+
 <br />
 <br />
 <h2><i class="bi bi-tags"></i> @ViewData["Title"]</h2>
@@ -32,7 +62,7 @@
     }
 }
 
-<table class="table">
+<table id="myTable" class="table">
     <thead>
         <tr>
             <th width="30">

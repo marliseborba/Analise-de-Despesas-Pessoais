@@ -4,6 +4,38 @@
     ViewData["Title"] = "Estabelecimentos";
 }
 
+<script type="text/javascript" charset="utf-8">
+    $(document).ready(function () {
+        $('#myTable').dataTable({
+            "language": {
+                "info": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+                "infoEmpty": "Mostrando 0 to 0 of 0 registros",
+                "infoFiltered": "(filtrado de _MAX_ registros)",
+                "lengthMenu": "Mostrar _MENU_ registros",
+                "search": "Buscar:",
+                "paginate": {
+                    "first": "Primeira",
+                    "last": "Última",
+                    "next": "Próxima",
+                    "previous": "Anterior"
+                },
+                "aria": {
+                    "sortAscending": ": clique para ordenar crescente",
+                    "sortDescending": ": clique para ordenar decrescente"
+                }
+            },
+
+            "columnDefs": [
+                {
+                    "orderable": false,
+                    "targets": [0,3]
+                }
+            ]
+
+        });
+    });
+</script>
+
 <br />
 <br />
 <h2><i class="bi bi-shop-window"></i> @ViewData["Title"]</h2>
@@ -33,10 +65,10 @@
 }
 
 
-<table class="table">
+<table id="myTable" class="table">
     <thead>
         <tr>
-            <th>
+            <th width="30">
             </th>
             <th>
                 Nome
