@@ -8,18 +8,21 @@ namespace Expenses.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public string User { get; set; }
-        public int Account { get; set; }
+        public string DebAccount { get; set; }
+        public string CredAccount { get; set; }
         public IEnumerable<Movement> Movements { get; set; } = new List<Movement>();
+        public string? Icon { get; set; }
 
         public Owner()
         { 
         }
 
-        public Owner(string name, string user, int account)
+        public Owner(string name, string user, string debAccount, string credAccount)
         {
             Name = name;
             User = user;
-            Account = account;
+            DebAccount = debAccount;
+            CredAccount = credAccount;
         }
 
         public IEnumerable<Movement> GetMovements()
@@ -40,18 +43,18 @@ namespace Expenses.Models
         public int CompareTo(object? obj)
         {
             Owner other = (Owner)obj;
-            return Account.CompareTo(other.Account);
+            return DebAccount.CompareTo(other.DebAccount);
         }
 
         public override bool Equals(object? obj)
         {
             Owner other = obj as Owner;
-            return Account.Equals(other.Account);
+            return DebAccount.Equals(other.DebAccount);
         }
 
         public override int GetHashCode()
         {
-            return Account.GetHashCode();
+            return DebAccount.GetHashCode();
         }
     }
 }

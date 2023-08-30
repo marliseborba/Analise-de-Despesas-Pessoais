@@ -1,52 +1,45 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Expenses.Models
 {
+    [Index(nameof(Name), IsUnique = true)]
     public class Establishment
     {
         [Key]
         public int Id { get; set; }
         public string Name { get; set; }
-        public string Description { get; set; }
-        public Category? Category { get; set; }
-        public int? CategoryId { get; set; }
-        public SubCategory? SubCategory { get; set; }
-        public int? SubCategoryId { get; set; }
+        public ICollection<KeyWord>? KeyWords { get; set; } = new List<KeyWord>();
+        public ICollection<Movement>? Movements { get; set; } = new List<Movement>();
+        public string? Icon { get; set; } = "bi bi-shop-window";
 
         public Establishment()
         {
         }
 
-        public Establishment(int id, string name, string description, Category category, SubCategory subCategory)
+        public Establishment(int id, string name, List<KeyWord> keyWords)
         {
             Id = id;
             Name = name;
-            Description = description;
-            Category = category;
-            SubCategory = subCategory;
+            KeyWords = keyWords;
         }
 
-        public Establishment(int id, string name, string description, Category category)
+        public Establishment(int id, string name)
         {
             Id = id;
             Name = name;
-            Description = description;
-            Category = category;
         }
 
-        public Establishment(string name, string description, Category category)
+        public Establishment(string name)
         {
             Name = name;
-            Description = description;
-            Category = category;
         }
 
-        public Establishment(int id, string name, string description)
+        public Establishment(string name, List<KeyWord> keyWords)
         {
-            Id = id;
             Name = name;
-            Description = description;
+            KeyWords = keyWords;
         }
     }
 }

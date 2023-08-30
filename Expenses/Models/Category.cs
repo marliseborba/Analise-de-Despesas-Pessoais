@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Expenses.Models
 {
@@ -7,8 +8,13 @@ namespace Expenses.Models
         [Key]
         public int Id { get; set; }
         public string Name { get; set; }
-        public ICollection<SubCategory> SubCategories { get; set; } = new List<SubCategory>();
-        public ICollection<Establishment> Establishments { get; set; } = new List<Establishment>();
+        [NotMapped]
+        public KeyWord? KeyWord { get; set; }
+        [NotMapped]
+        public List<int>? Keys { get; set; }
+        public ICollection<KeyWord>? KeyWords { get; set; } = new List<KeyWord>();
+        public ICollection<Movement>? Movements { get; set; } = new List<Movement>();
+        public string? Icon { get; set; } = "bi bi-tags";
 
         public Category() { }
 
@@ -23,19 +29,22 @@ namespace Expenses.Models
             Name = name;
         }
 
-        public Category(int id, string name, ICollection<SubCategory> subCategories) : this(id, name)
+        public Category(string name, string icon)
         {
-            SubCategories = subCategories;
+            Name = name;
+            Icon = icon;
         }
 
-        public Category(int id, string name, ICollection<SubCategory> subCategories, ICollection<Establishment> establishments) : this(id, name, subCategories)
+        public Category(string name, string icon, List<KeyWord> keyWords)
         {
-            Establishments = establishments;
+            Name = name;
+            Icon = icon;
+            KeyWords = keyWords;
         }
 
-        public Category(int id, string name, ICollection<Establishment> establishments) : this(id, name)
+        public Category(int id, string name, ICollection<Movement> movements) : this(id, name)
         {
-            Establishments = establishments;
+            Movements = movements;
         }
     }
 }
