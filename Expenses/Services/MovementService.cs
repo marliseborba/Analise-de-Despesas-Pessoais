@@ -9,6 +9,11 @@ using Microsoft.EntityFrameworkCore;
 using System.Text;
 using System.IO;
 using Microsoft.Extensions.Caching.Memory;
+using Expenses.Models.ViewModels;
+using Aspose.Finance.Ofx;
+using OfxSharp;
+using Aspose.Finance.Xbrl.Dom;
+using Aspose.Finance.Xbrl;
 
 namespace Expenses.Services
 {
@@ -17,12 +22,17 @@ namespace Expenses.Services
         private readonly ExpensesContext _context;
         public IMemoryCache _memoryCache { get; set; }
         private readonly SeedingService _seedingService;
+        private readonly OwnerService _ownerService;
 
-        public MovementService(ExpensesContext context, IMemoryCache memoryCache, SeedingService seedingService)
+        public MovementService(ExpensesContext context,
+            IMemoryCache memoryCache,
+            SeedingService seedingService,
+            OwnerService ownerService)
         {
             _context = context;
             _memoryCache = memoryCache;
             _seedingService = seedingService;
+            _ownerService = ownerService;
         }
 
         public void Insert(Movement movement)
@@ -41,10 +51,19 @@ namespace Expenses.Services
         {
             return _context.Movement
                     .Include(x => x.Establishment)
-                    .ThenInclude(x => x.Category)
                     .Include(x => x.Owner)
                     .OrderBy(x => x.Date)
                     .GroupBy(x => x.Owner)
+                    .ToList();
+        }
+
+        public List<Movement> GetMovementsNoGrouping()
+        {
+            return _context.Movement
+                    .Include(x => x.Establishment)
+                    .Include(x => x.Categories)
+                    .Include(x => x.Owner)
+                    .OrderBy(x => x.Date)
                     .ToList();
         }
 
@@ -66,6 +85,170 @@ namespace Expenses.Services
                 .OrderBy(x => x.Date)
                 .GroupBy(x => x.Owner)
                 .ToList();
+        }
+
+        public List<Movement> FindByDateNoGrouping(DateTime? minDate, DateTime? maxDate)
+        {
+            var result = from obj in _context.Movement select obj;
+            if (minDate.HasValue)
+            {
+                result = result.Where(x => x.Date >= minDate.Value);
+            }
+            if (maxDate.HasValue)
+            {
+                result = result.Where(x => x.Date <= maxDate.Value);
+            }
+
+            return result
+                .Include(x => x.Owner)
+                .Include(x => x.Establishment)
+                .OrderBy(x => x.Date)
+                .ToList();
+        }
+
+        public List<Movement> SearchMovements(MovementViewModel viewModel)
+        {
+            var result = _context.Movement.AsQueryable();
+
+            result = result.Where(x => x.Date >= viewModel.MinDate && x.Date <= viewModel.MaxDate);
+
+            if (viewModel.Owner.Name != "Selecione...")
+            {
+                result = result.Where(x => x.Owner.Name.Equals(viewModel.Owner.Name));
+            }
+
+            if (viewModel.Establishment.Name != "Selecione...")
+            {
+                result = result.Where(x => x.Establishment.Name.Equals(viewModel.Establishment.Name));
+            }
+
+            if (viewModel.Category.Name != "Selecione...")
+            {
+                //result = result.Where(x => x.Category.Name.Equals(viewModel.Category.Name));
+            }
+
+            if (viewModel.SubCategory.Name != "Selecione...")
+            {
+                result = result.Where(x => x.SubCategory.Name.Equals(viewModel.SubCategory.Name));
+            }
+            result = result
+                .Include(x => x.Owner)
+                .Include(x => x.Establishment)
+                .Include(x => x.Categories)
+                .Include(x => x.SubCategory);
+
+            return result.ToList();
+        }    
+
+        public void PopulateViewModel(MovementViewModel viewModel)
+        {
+            foreach (var item in _context.Owner)
+            {
+                viewModel.Owners.Add(item);
+            }
+
+            foreach (var item in _context.Establishment)
+            {
+                viewModel.Establishments.Add(item);
+            }
+
+            foreach (var item in _context.Category)
+            {
+                viewModel.Categories.Add(item);
+            }
+
+            foreach (var item in _context.SubCategory)
+            {
+                viewModel.SubCategories.Add(item);
+            }
+        }
+
+        public ICollection<Movement> UploadExtract(IList<IFormFile> files)
+        {
+            List<Movement> movements = new List<Movement>();
+            _memoryCache.Set("movs", movements);
+
+            try
+            {
+                foreach (var file in files)
+                {
+                    // Cria variaveis com path e nome
+                    var fileName = file.FileName;
+                    var filePath = Path.Combine(@"C:Temp\", fileName);
+
+                    // Cria variavel com path do arquivo codificado + novo sufixo
+                    var filePathEncoding = Path.Combine(@"C:Temp\", "Enc"+fileName);
+
+                    // Cria a cópia do file
+                    using (FileStream fs = System.IO.File.Create(filePath))
+                    {
+                        file.CopyTo(fs);
+                    }
+
+                    using (FileStream fs = new FileStream(filePath, FileMode.Open))
+                    {
+                        using (StreamReader sr = new StreamReader(fs))
+                        {
+                            using (StreamWriter sw = File.AppendText(filePathEncoding))
+                            {
+                                while (!sr.EndOfStream)
+                                {
+                                    var line = sr.ReadLine();
+                                    var l = line;
+
+                                    if (line.Contains("UTF-8"))
+                                    {
+                                        l = line.Replace("UTF-8", "USASCII");
+                                    }
+                                    if (line.Contains("CHARSET:NONE"))
+                                    {
+                                        l = line.Replace("CHARSET:NONE", "CHARSET:1252");
+                                    }
+
+                                    sw.WriteLine(l);
+                                }
+                            }
+                        }
+                    }
+
+                    var parser = new OFXDocumentParser();
+                    var ofxDocument = parser.Import(new FileStream(filePathEncoding, FileMode.Open));
+
+                    File.Delete(filePath);
+                    File.Delete(filePathEncoding);
+
+                    Owner own = new Owner();
+                    string ownerId = ofxDocument.Account.AccountId;
+                    string accType = ofxDocument.Account.AccountType.ToString();
+                    if (accType == "BANK")
+                    {
+                        own = _context.Owner.Where(x => x.DebAccount.Equals(ownerId)).FirstOrDefault();
+                    }
+                    else if (accType == "CC")
+                    {
+                        own = _context.Owner.Where(x => x.CredAccount.Equals(ownerId)).FirstOrDefault();
+                    }
+
+                    foreach (var item in ofxDocument.Transactions)
+                    {
+                        DateTime date = item.Date;
+                        double value = (double)item.Amount;
+                        string identifier = item.TransactionId;
+                        string description = item.Memo;
+                        Establishment estab = new Establishment();
+                        estab = CheckEstab(description);
+                        Movement exp = new Movement(description, date, value, identifier, Enum.Parse<MovementType>(accType), own, estab);
+                        exp.OwnerId = own.Id;
+                        movements.Add(exp);
+                    }
+                }
+            }
+            catch (IOException e)
+            {
+
+            }
+
+            return movements;
         }
 
         public ICollection<Movement> Upload(IList<IFormFile> files)
@@ -128,18 +311,25 @@ namespace Expenses.Services
 
         public Establishment CheckEstab(string description)
         {
+            List<KeyWord> keyWords = _context.KeyWord.ToList();
             ICollection<Establishment> estabs = _context.Establishment.ToList();
-            foreach (Establishment est in estabs)
+            Establishment est = new Establishment();
+            foreach (var key in keyWords)
             {
-                if (est.Description != " "
-                && est.Description != ""
-                && est.Description != null
-                && description.Contains(est.Description))
+                if (description != " "
+                && description != ""
+                && description != null
+                && description.ToLower().Contains(key.Description.ToLower()))
                 {
-                    return est;
+                    var e = _context.Establishment.Where(x => x.KeyWords.Any(k => k.Id == key.Id));
+                    var query = from establishment in _context.Establishment
+                                where establishment.KeyWords.Any(k => k.Id == key.Id)
+                                select establishment;
+                    est = query.FirstOrDefault();
+                    //var c = _context.Category.Where(x => x.Id == key.Id).SelectMany(c => Categories).ToList();
                 }
             }
-            return null;
+            return est;
         }
 
         public Owner CheckOwner(string account)
@@ -147,12 +337,60 @@ namespace Expenses.Services
             ICollection<Owner> owns = _context.Owner.ToList();
             foreach (Owner owner in owns) 
             {
-                if(account.Contains(owner.Account.ToString()))
+                if(account.Contains(owner.DebAccount.ToString()))
                 {
                     return owner;
                 }
             }
             return null;
+        }
+
+        public ICollection<Category> CheckCategory(string description)
+        {
+            List<KeyWord> keyWords = _context.KeyWord.ToList();
+            List<Category> cats = new List<Category>();
+            foreach (var key in keyWords)
+            {
+                if (key.Description != " "
+                && key.Description != ""
+                && key.Description != null
+                && description.ToLower().Contains(key.Description.ToLower()))
+                {
+                    var query = from category in _context.Category
+                                where category.KeyWords.Any(k => k.Id == key.Id)
+                                select category;
+                    //var c = _context.Category.Where(x => x.Id == key.Id).SelectMany(c => Categories).ToList();
+                    foreach(var cat in query)
+                    {
+                        cats.Add(cat);
+                    }
+                }
+            }
+            return cats;
+        }
+
+        public ICollection<Movement> UpdateCategories()
+        {
+            var movements = _context.Movement.Include(x => x.Categories).ToList();
+            var updated = new List<Movement>();
+            foreach (Movement item in movements)
+            {
+                var cat = CheckCategory(item.Description);
+                if (cat != null)
+                {
+                    ICollection<Category> old = item.Categories;
+                    ICollection<Category> news = cat.Except(old).ToList();
+
+                    foreach(var c in news)
+                    {
+                        item.Categories.Add(c);
+                        _context.Update(item);
+                        updated.Add(item);
+                    }
+                }
+            }
+            _context.SaveChanges();
+            return updated;
         }
 
         public ICollection<Movement> UpdateEstablishments()
@@ -161,15 +399,17 @@ namespace Expenses.Services
             var updated = new List<Movement>();
             foreach (Movement item in movements) 
             {
-                var estab = CheckEstab(item.Description);
-                if (estab != null) 
+                Establishment estab = new Establishment();
+                estab = CheckEstab(item.Description);
+                if (estab != null && estab.Name != null) 
                 {
                     item.EstablishmentId = estab.Id;
+
                     _context.Update(item);
                     updated.Add(item);
+                    _context.SaveChanges();
                 }
             }
-            _context.SaveChanges();
             return updated;
         }
     }

@@ -1,4 +1,5 @@
 ﻿using Expenses.Data;
+using Expenses.Models;
 
 namespace Expenses.Services
 {
@@ -11,5 +12,9 @@ namespace Expenses.Services
             _context = context;
         }
 
+        public List<Owner> GetOwners()
+        {
+            return _context.Owner.ToList();
+        }
     }
 }
