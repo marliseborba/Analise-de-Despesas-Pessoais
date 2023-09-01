@@ -1,18 +1,76 @@
 ﻿using Expenses.Models;
 using Expenses.Models.ViewModels;
+using Expenses.Services;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Data;
 
 namespace Expenses.Controllers
 {
     public class ChartsController : Controller
     {
-        public IActionResult Index()
+        private readonly ChartService _chartService;
+        private readonly MovementService _movementService;
+
+		public ChartsController(ChartService chartService, MovementService movementService)
+		{
+			_chartService = chartService;
+            _movementService = movementService;
+		}
+
+		public IActionResult Index()
         {
-            return View();
+            var viewModel = new ChartViewModel();
+            Chart chart = new Chart();
+            DataSerie dataSerie = new DataSerie();
+            DataSerie dataSerie2 = new DataSerie();
+            List<DataSerie> dataSeries = new List<DataSerie>();
+            List<DataPoint> dataPoints = new List<DataPoint>();
+			List<Movement> movements = new List<Movement>();
+
+			movements = _movementService.GetMovementsNoGrouping().Where(x => x.Date.Year == 2022).ToList();
+
+			dataPoints = ChartService.FormatToDataPoint(movements).ToList();
+
+            dataSerie.dataPoints = dataPoints;
+
+            chart.data.Add(dataSerie);
+            chart.data.Add(dataSerie2);
+            viewModel.Chart = chart;
+
+            dataPoints = ChartService.GetRandomDataForNumericAxis(30);
+			List<DataPoint> dataPoints2 = ChartService.GetRandomDataForNumericAxis(30);
+			dataSerie.dataPoints = dataPoints;
+
+            dataSerie2.dataPoints = dataPoints2;
+			chart.data.Add(dataSerie2);
+			viewModel.DataSeries.Add(dataSerie);
+			viewModel.DataSeries.Add(dataSerie2);
+
+			viewModel.DataSeriesJ = JsonConvert.SerializeObject(viewModel.DataSeries);
+			//viewModel.DataSeriesJ = JsonConvert.SerializeObject(dataSerie);
+			viewModel.ChartJ = JsonConvert.SerializeObject(chart);
+            viewModel.DataPoints = JsonConvert.SerializeObject(dataPoints);
+			ViewBag.DataSeries = JsonConvert.SerializeObject(dataSerie);
+            ViewBag.DataPoints = JsonConvert.SerializeObject(dataPoints);
+
+			//viewModel.Chart.DataSeries.Add(new DataSerie());
+			//ViewBag.DataPoints = viewModel.DataSeries.FirstOrDefault().dataPoints;
+			//ViewBag.DataPoints = JsonConvert.SerializeObject(viewModel.DataSeries.FirstOrDefault().dataPoints);
+			//ViewBag.DataSeries = JsonConvert.SerializeObject(viewModel.DataSeries.ToList());
+
+			return View(viewModel);
         }
 
-        [HttpPost]
+		public ActionResult Line()
+		{
+			//Below code can be used to include dynamic data in Chart. Check view page and uncomment the line "dataPoints: @Html.Raw(ViewBag.DataPoints)"
+			//ViewBag.DataPoints = JsonConvert.SerializeObject(DataService.GetRandomDataForNumericAxis(1000), _jsonSetting);
+
+			return View();
+		}
+
+		[HttpPost]
         public JsonResult Chart() 
         {
             /*
