@@ -4,26 +4,13 @@
     ViewData["Title"] = "Gráficos";
 }
 <br />
+@Html.Raw(Model.ChartJ)
 <div id="chartContainer"></div>
 
 <script type="text/javascript">
 
 	$(function () {
-		var chart = new CanvasJS.Chart("chartContainer", {
-            theme: "light2",
-            zoomEnabled: true,
-            animationEnabled: true,
-            title: {
-                text: "Line Chart in ASP.Net MVC using CanvasJS"
-            },
-            subtitles: [
-                {
-                    text: "Try Zooming and Panning"
-                }
-            ],
-            data: @Html.Raw(Model.DataSeriesJ),
-			
-		});
+		var chart = new CanvasJS.Chart("chartContainer", @Html.Raw(Model.ChartJ));
 		chart.render();
 	});
 </script>
