@@ -42,7 +42,7 @@ namespace Expenses.Controllers
         public IActionResult Index()
         {
             _seedingService.SeedInitial();
-            _movementService.UpdateEstablishments();
+            //_movementService.UpdateEstablishments();
             //var catUpdated = _movementService.UpdateCategories();
             //TempData["catUpdated"] = catUpdated.Count;
             var viewModel = new MovementViewModel
@@ -57,7 +57,9 @@ namespace Expenses.Controllers
 
         public IActionResult SearchMovements(MovementViewModel viewModel)
         {
-            viewModel.Movements = _movementService.SearchMovements(viewModel);
+            List<Movement> movs = new List<Movement>();
+            movs = _movementService.SearchMovements(viewModel).ToList();
+            viewModel.Movements = movs;
             _movementService.PopulateViewModel(viewModel);
             return View("Index", viewModel);
         }

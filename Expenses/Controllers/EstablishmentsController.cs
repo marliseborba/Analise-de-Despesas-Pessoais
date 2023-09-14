@@ -70,7 +70,7 @@ namespace Expenses.Controllers
             {
                 return RedirectToAction(nameof(Error), new { message = "Id não fornecido" });
             }
-            var obj = _establishmentService.FindById(id.Value);
+            Establishment obj = _establishmentService.FindById(id.Value);
             if (obj == null)
             {
                 return RedirectToAction(nameof(Error), new { message = "Id não encontrado" });

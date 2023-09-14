@@ -3,6 +3,7 @@ using Expenses.Models;
 using Expenses.Models.ViewModels;
 using Expenses.Services;
 using Microsoft.AspNetCore.Mvc;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Expenses.Controllers
@@ -30,7 +31,6 @@ namespace Expenses.Controllers
 
         public IActionResult Index()
         {
-            _movementService.UpdateCategories();
             return View(_categoryService.GetCategories().ToList());
         }
 
@@ -56,8 +56,17 @@ namespace Expenses.Controllers
                 };
                 return View(viewModel);
             }
-            _categoryService.Insert(category, keys);
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                var created = _categoryService.Insert(category, keys);
+                TempData["created"] = created.Name;
+                _movementService.UpdateCategories();
+                return RedirectToAction(nameof(Index));
+            }
+            catch (ApplicationException e)
+            {
+                return RedirectToAction(nameof(Error), new { message = e.Message });
+            }
         }
 
         public IActionResult Edit(int? id)
@@ -66,7 +75,7 @@ namespace Expenses.Controllers
             {
                 return RedirectToAction(nameof(Error), new { message = "Id não fornecido" });
             }
-            var obj = _categoryService.FindById(id.Value);
+            Category obj = _categoryService.FindById(id.Value);
             if (obj == null)
             {
                 return RedirectToAction(nameof(Error), new { message = "Id não encontrado" });
@@ -98,7 +107,8 @@ namespace Expenses.Controllers
                 var updated = _categoryService.Update(category, keys);
                 TempData["updated"] = updated.Name;
                 _movementService.UpdateEstablishments();
-                return RedirectToAction(nameof(Index));
+				_movementService.UpdateCategories();
+				return RedirectToAction(nameof(Index));
             }
             catch (ApplicationException e)
             {
