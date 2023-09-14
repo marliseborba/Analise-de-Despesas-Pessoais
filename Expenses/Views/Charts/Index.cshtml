@@ -3,14 +3,162 @@
 @{
     ViewData["Title"] = "Gráficos";
 }
+
 <br />
-@Html.Raw(Model.ChartJ)
-<div id="chartContainer"></div>
+<br />
+<h2><i class="bi bi-graph-up"></i> @ViewData["Title"]</h2>
+<br />
+
+<p class="d-inline-flex gap-1">
+    <a class="btn btn-outline-primary collapsed" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+        <i cla
+            ss="bi bi-search"></i> Buscar
+    </a>
+</p>
+<div class="collapse" id="collapseExample">
+    <div class="card card-body">
+        <form asp-action="Search">
+            <fieldset class="form-group" style="border:1px solid;border-radius:4px;padding:10px">
+                <legend style="font-size:16px">Filtros:</legend>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label asp-for="MinDate" class="control-label">Início</label>
+                        <input type="date" asp-for="MinDate" class="form-control form-control-sm" value="@Model.MinDate.ToString("yyyy-MM-dd")" />
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="MaxDate" class="control-label">Fim</label>
+                        <input type="date" asp-for="MaxDate" class="form-control form-control-sm" value="@Model.MaxDate.ToString("yyyy-MM-dd")" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <br />
+                        <label asp-for="Category.Name" class="control-label"><i class="bi bi-tags"></i> Categoria</label>
+                        <select name="cats" multiple id="SelectedCats" asp-for="Category.Name" asp-items="@(new SelectList(Model.Categories,"Name","Name"))" class="form-control form-control-sm"><option selected>Selecione...</option></select>
+                    </div>
+                    <div class="col-md-6">
+                        <br />
+                        <label asp-for="Establishment.Name" class="control-label"><i class="bi bi-shop-window"></i> Estabelecimento</label>
+                        <select name="estabs" multiple id="SelectedEstabs" asp-for="Establishment.Name" asp-items="@(new SelectList(Model.Establishments,"Name","Name"))" class="form-control form-control-sm"><option selected>Selecione...</option></select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <br />
+                        <label asp-for="Owner.Name" class="control-label"><i class="fa-solid fa-user"></i> Pessoa</label>
+                        <select name="owns" multiple id="SelectedOwns" asp-for="Owner.Name" asp-items="@(new SelectList(Model.Owners,"Name","Name"))" class="form-control form-control-sm"><option selected>Selecione...</option></select>
+                    </div>
+                </div>
+            </fieldset>
+            <br />
+            <fieldset class="form-group" style="border:1px solid;border-radius:4px;padding:10px">
+                <legend style="font-size:16px">Exibição:</legend>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label asp-for="EType" class="control-label"><i class="bi bi-graph-up"></i> Tipo de Gráfico</label>
+                        <select asp-for="EType" class="form-control form-control-sm">
+                            <option>Selecione...</option>
+                            <option value="line">Linha</option>
+                            <option value="bar">Barra</option>
+                            <option>Pizza</option>
+                            <option>Donut</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="EData" class="control-label"><i class="bi bi-bar-chart-steps"></i> Separar por</label>
+                        <select asp-for="EData" class="form-control form-control-sm">
+                            <option>Selecione...</option>
+                            <option>Pessoa</option>
+                            <option>Categoria</option>
+                            <option>Estabelecimento</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <br />
+                        <label asp-for="ETime" class="control-label"><i class="bi bi-calendar-range"></i> Período</label>
+                        <select asp-for="ETime" class="form-control form-control-sm">
+                            <option>Selecione...</option>
+                            <option>Anos</option>
+                            <option>Meses</option>
+                        </select>
+                    </div>
+                </div>
+            </fieldset>
+            <div>
+                <br />
+                <button type="submit" class="btn btn-outline-primary">Buscar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<br />
+
+<div class="container">
+    <div class="col-md-12">
+        <canvas id="myChart"></canvas>
+    </div>
+</div>
+<br />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js" type="text/javascript"></script>
+<script src="~/lib/jquery/dist/multiselect.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script type ="text/javascript">
+
+    const ctx = document.getElementById('myChart');
+
+    var chart = new Chart(ctx, @Html.Raw(Model.ChartJ));
+
+    chart.options.scales.yAxis.ticks =
+    {
+        callback: (val) => {
+            return val.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+        },
+        title: "Valor"
+    };
+    
+    chart.options.plugins.tooltip.callbacks =
+        {
+            label: function (context) {
+                let label = context.dataset.label || '';
+
+                if (label) {
+                    label += ': ';
+                }
+                if (context.parsed.y !== null) {
+                    label += new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(context.parsed.y);
+                }
+                return label;
+            }
+        };
+
+    chart.update();
+
+</script>
 
 <script type="text/javascript">
+    var optionsVal1 = [];
+    $("#SelectedCats option").each(function () {
+        optionsVal1.push($(this).val());
+    });
+    var optionsVal2 = [];
+    $("#SelectedEstabs option").each(function () {
+        optionsVal2.push($(this).val());
+    });
+    var optionsVal3 = [];
+    $("#SelectedEstabs option").each(function () {
+        optionsVal3.push($(this).val());
+    });
+    $.ajax({
+        traditional: true,
+        dataType: "json",
+        data: { SelectedSortOrderOptions: optionsVal1, optionsVal2, optionsVal3 },
+        success: function () {
 
-	$(function () {
-		var chart = new CanvasJS.Chart("chartContainer", @Html.Raw(Model.ChartJ));
-		chart.render();
-	});
+        },
+    });
+
 </script>
