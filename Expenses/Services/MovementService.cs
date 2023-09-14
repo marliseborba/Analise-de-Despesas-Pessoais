@@ -14,6 +14,7 @@ using Aspose.Finance.Ofx;
 using OfxSharp;
 using Aspose.Finance.Xbrl.Dom;
 using Aspose.Finance.Xbrl;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Expenses.Services
 {
@@ -108,34 +109,28 @@ namespace Expenses.Services
 
         public List<Movement> SearchMovements(MovementViewModel viewModel)
         {
-            var result = _context.Movement.AsQueryable();
-
-            result = result.Where(x => x.Date >= viewModel.MinDate && x.Date <= viewModel.MaxDate);
-
-            if (viewModel.Owner.Name != "Selecione...")
-            {
-                result = result.Where(x => x.Owner.Name.Equals(viewModel.Owner.Name));
-            }
-
-            if (viewModel.Establishment.Name != "Selecione...")
-            {
-                result = result.Where(x => x.Establishment.Name.Equals(viewModel.Establishment.Name));
-            }
-
-            if (viewModel.Category.Name != "Selecione...")
-            {
-                //result = result.Where(x => x.Category.Name.Equals(viewModel.Category.Name));
-            }
-
-            if (viewModel.SubCategory.Name != "Selecione...")
-            {
-                result = result.Where(x => x.SubCategory.Name.Equals(viewModel.SubCategory.Name));
-            }
-            result = result
+            var result = _context.Movement
+                //.Where(x => x.Date >= viewModel.MinDate && x.Date <= viewModel.MaxDate)
                 .Include(x => x.Owner)
                 .Include(x => x.Establishment)
-                .Include(x => x.Categories)
-                .Include(x => x.SubCategory);
+                .Include(x => x.Categories).ToList();
+
+            result = result.Where(x => x.Date >= viewModel.MinDate && x.Date <= viewModel.MaxDate).ToList();
+
+            if (viewModel.Owns.FirstOrDefault() != "Selecione...")
+            {
+                result = result.Where(x => viewModel.Owns.Contains(x.Owner.Name)).ToList();
+            }
+
+            if (viewModel.Estabs.FirstOrDefault() != "Selecione...")
+            {
+                result = result.Where(x => x.Establishment != null && viewModel.Estabs.Contains(x.Establishment.Name)).ToList();
+            }
+            
+            if (viewModel.Cats.FirstOrDefault() != "Selecione...")
+            {
+                result = result.Where(x => x.Categories != null && x.Categories.Any(t => viewModel.Cats.Contains(t.Name))).ToList();
+            }
 
             return result.ToList();
         }    
@@ -237,8 +232,12 @@ namespace Expenses.Services
                         string description = item.Memo;
                         Establishment estab = new Establishment();
                         estab = CheckEstab(description);
-                        Movement exp = new Movement(description, date, value, identifier, Enum.Parse<MovementType>(accType), own, estab);
+                        Movement exp = new Movement(description, date, value, identifier, Enum.Parse<MovementType>(accType));
                         exp.OwnerId = own.Id;
+                        if (estab != null && estab.Id > 0)
+                        {
+                            exp.EstablishmentId = estab.Id;
+                        }
                         movements.Add(exp);
                     }
                 }
@@ -300,8 +299,8 @@ namespace Expenses.Services
 
             foreach (Movement mov in except)
             {
-                mov.Establishment = null;
-                mov.Owner = null;
+                //mov.Establishment = null;
+                //mov.Owner = null;
             }
 
             _context.AddRange(except);

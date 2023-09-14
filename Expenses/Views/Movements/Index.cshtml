@@ -3,45 +3,21 @@
 @{
     ViewData["Title"] = "Movimentações";
 }
-<script type="text/javascript" charset="utf-8">
-    $(document).ready(function () {
-        $('#myTable').dataTable({
-            "language": {
-                "info": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
-                "infoEmpty": "Mostrando 0 to 0 of 0 registros",
-                "infoFiltered": "(filtrado de _MAX_ registros)",
-                "lengthMenu": "Mostrar _MENU_ registros",
-                "search": "Buscar:",
-                "paginate": {
-                    "first": "Primeira",
-                    "last": "Última",
-                    "next": "Próxima",
-                    "previous": "Anterior"
-                },
-                "aria": {
-                    "sortAscending": ": clique para ordenar crescente",
-                    "sortDescending": ": clique para ordenar decrescente"
-                }
-            },
-
-        });
-    });
-</script>
 
 <br />
 <br />
-<h2><i class="fa-solid fa-money-bill-transfer"></i> @ViewData["Title"]</h2>
+<h2><i class="fa-solid fa-right-left"></i> @ViewData["Title"]</h2>
 <br />
 
 <p class="d-inline-flex gap-1">
-    <a class="btn btn-primary collapsed" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+    <a class="btn btn-outline-primary collapsed" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
         <i class="bi bi-search"></i> Buscar
     </a>
 </p>
 <div class="collapse" id="collapseExample">
     <div class="card card-body">
         <form asp-action="SearchMovements">
-            <div class="row border-primary text-light">
+            <div class="row">
                 <div class="col-md-6">
                     <label asp-for="MinDate" class="control-label">Início</label>
                     <input type="date" asp-for="MinDate" class="form-control" value="@Model.MinDate.ToString("yyyy-MM-dd")" />
@@ -50,31 +26,28 @@
                     <label asp-for="MaxDate" class="control-label">Fim</label>
                     <input type="date" asp-for="MaxDate" class="form-control" value="@Model.MaxDate.ToString("yyyy-MM-dd")" />
                 </div>
+            </div>
+            <div class="row">
                 <div class="col-md-6">
                     <br />
-                    <label asp-for="Owner.Name" class="control-label"><i class="fa-solid fa-user"></i> Autora</label>
-                    <select asp-for="Owner.Name" asp-items="@(new SelectList(Model.Owners,"Name","Name"))" class="form-control"><option>Selecione...</option></select>
+                    <label asp-for="Category.Name" class="control-label"><i class="bi bi-tags"></i> Categoria</label>
+                    <select name="cats" multiple id="SelectedCats" asp-for="Category.Name" asp-items="@(new SelectList(Model.Categories,"Name","Name"))" class="form-control"><option selected>Selecione...</option></select>
                 </div>
                 <div class="col-md-6">
                     <br />
                     <label asp-for="Establishment.Name" class="control-label"><i class="bi bi-shop-window"></i> Estabelecimento</label>
-                    <select asp-for="Establishment.Name" asp-items="@(new SelectList(Model.Establishments,"Name","Name"))" class="form-control"><option>Selecione...</option></select>
-                </div>
-                <div class="col-md-6">
-                    <br />
-                    <label asp-for="Category.Name" class="control-label"><i class="bi bi-tags"></i> Categoria</label>
-                    <select asp-for="Category.Name" asp-items="@(new SelectList(Model.Categories,"Name","Name"))" class="form-control"><option>Selecione...</option></select>
-                </div>
-                <div class="col-md-6">
-                    <br />
-                    <label asp-for="SubCategory.Name" class="control-label">Sub Categoria</label>
-                    <select asp-for="SubCategory.Name" asp-items="@(new SelectList(Model.SubCategories,"Name","Name"))" class="form-control"><option>Selecione...</option></select>
-                </div>
-                <div>
-                    <br />
-                    <button type="submit" class="btn btn-secondary">Buscar</button>
+                    <select name="estabs" multiple id="SelectedEstabs" asp-for="Establishment.Name" asp-items="@(new SelectList(Model.Establishments,"Name","Name"))" class="form-control"><option selected>Selecione...</option></select>
                 </div>
             </div>
+            <div class="col-md-6">
+                <br />
+                <label asp-for="Owner.Name" class="control-label"><i class="fa-solid fa-user"></i> Autora</label>
+                <select name="owns" multiple id="SelectedOwns" asp-for="Owner.Name" asp-items="@(new SelectList(Model.Owners,"Name","Name"))" class="form-control"><option selected>Selecione...</option></select>
+            </div>
+                <div>
+                    <br />
+                    <button type="submit" class="btn btn-outline-primary">Buscar</button>
+                </div>
         </form>
     </div>
 </div>
@@ -201,3 +174,68 @@
     </tbody>
 </table>
 
+<script type="text/javascript">
+    var optionsVal1 = [];
+    $("#SelectedCats option").each(function () {
+        optionsVal1.push($(this).val());
+    });
+    $.ajax({
+        traditional: true,
+        dataType: "json",
+        data: { SelectedSortOrderOptions: optionsVal1 },
+        success: function () {
+
+        },
+    });
+
+    var optionsVal2 = [];
+    $("#SelectedEstabs option").each(function () {
+        optionsVal2.push($(this).val());
+    });
+    $.ajax({
+        traditional: true,
+        dataType: "json",
+        data: { SelectedSortOrderOptions: optionsVal2 },
+        success: function () {
+
+        },
+    });
+
+    var optionsVal3 = [];
+    $("#SelectedOwns option").each(function () {
+        optionsVal3.push($(this).val());
+    });
+    $.ajax({
+        traditional: true,
+        dataType: "json",
+        data: { SelectedSortOrderOptions: optionsVal3 },
+        success: function () {
+
+        },
+    });
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#myTable').dataTable({
+            "language": {
+                "info": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+                "infoEmpty": "Mostrando 0 to 0 of 0 registros",
+                "infoFiltered": "(filtrado de _MAX_ registros)",
+                "lengthMenu": "Mostrar _MENU_ registros",
+                "search": "Buscar:",
+                "paginate": {
+                    "first": "Primeira",
+                    "last": "Última",
+                    "next": "Próxima",
+                    "previous": "Anterior"
+                },
+                "aria": {
+                    "sortAscending": ": clique para ordenar crescente",
+                    "sortDescending": ": clique para ordenar decrescente"
+                }
+            },
+
+        });
+    });
+</script>

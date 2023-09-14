@@ -4,44 +4,32 @@
     ViewData["Title"] = "Categorias";
 }
 
-<script type="text/javascript" charset="utf-8">
-    $(document).ready(function () {
-        $('#myTable').dataTable({
-            "language": {
-                "info": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
-                "infoEmpty": "Mostrando 0 to 0 of 0 registros",
-                "infoFiltered": "(filtrado de _MAX_ registros)",
-                "lengthMenu": "Mostrar _MENU_ registros",
-                "search": "Buscar:",
-                "paginate": {
-                    "first": "Primeira",
-                    "last": "Última",
-                    "next": "Próxima",
-                    "previous": "Anterior"
-                },
-                "aria": {
-                    "sortAscending": ": clique para ordenar crescente",
-                    "sortDescending": ": clique para ordenar decrescente"
-                }
-            },
-
-            "columnDefs": [{
-                "targets": [0, 3],
-                "orderable": false
-            }]
-
-        });
-    });
-</script>
-
 <br />
 <br />
 <h2><i class="bi bi-tags"></i> @ViewData["Title"]</h2>
 <br />
 
-<input type="button" onclick="location.href='@Url.Action("Create", "Categories")'" class="btn btn-primary" value="Criar Categoria" />
+<input type="button" onclick="location.href='@Url.Action("Create", "Categories")'" class="btn btn-outline-primary" value="Criar Categoria" />
 <br />
 <br />
+@if (TempData.ContainsKey("created"))
+{
+    string created = (string)TempData["created"];
+    if (created != null)
+    {
+        <div class="alert alert-dismissible alert-success">
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <span>A categoria <strong>@TempData["created"] </strong> foi criada.</span>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-dismissible alert-warning">
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <span>Nenhuma categoria foi criada.</span>
+        </div>
+    }
+}
 
 @if (TempData.ContainsKey("updated"))
 {
@@ -82,7 +70,7 @@
         {
             <tr>
                 <td>
-                    <i class="@item.Icon" style="color: white;"></i>
+                    <i class="@item.Icon"></i>
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Name)
@@ -103,10 +91,40 @@
                     }
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id"><i class="bi bi-pencil-square" style="color: white;"></i></a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id"><i class="bi bi-trash3-fill" style="color: white;"></i></a>
+                    <a asp-action="Edit" asp-route-id="@item.Id"><i class="bi bi-pencil-square"></i></a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id"><i class="bi bi-trash3-fill"></i></a>
                 </td>
             </tr>
         }
     </tbody>
 </table>
+
+<script type="text/javascript" charset="utf-8">
+    $(document).ready(function () {
+        $('#myTable').dataTable({
+            "language": {
+                "info": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+                "infoEmpty": "Mostrando 0 to 0 of 0 registros",
+                "infoFiltered": "(filtrado de _MAX_ registros)",
+                "lengthMenu": "Mostrar _MENU_ registros",
+                "search": "Buscar:",
+                "paginate": {
+                    "first": "Primeira",
+                    "last": "Última",
+                    "next": "Próxima",
+                    "previous": "Anterior"
+                },
+                "aria": {
+                    "sortAscending": ": clique para ordenar crescente",
+                    "sortDescending": ": clique para ordenar decrescente"
+                }
+            },
+
+            "columnDefs": [{
+                "targets": [0, 3],
+                "orderable": false
+            }]
+
+        });
+    });
+</script>

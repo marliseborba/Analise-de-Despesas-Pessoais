@@ -11,14 +11,16 @@ namespace Expenses.Controllers
     {
         private readonly SeedingService _seedService;
         private readonly KeyWordService _keyWordService;
+		private readonly MovementService _movementService;
 
-        public KeyWordsController(SeedingService seedService, KeyWordService keyWordService)
-        {
-            _seedService = seedService;
-            _keyWordService = keyWordService;
-        }
+		public KeyWordsController(SeedingService seedService, KeyWordService keyWordService, MovementService movementService)
+		{
+			_seedService = seedService;
+			_keyWordService = keyWordService;
+			_movementService = movementService;
+		}
 
-        public IActionResult Index()
+		public IActionResult Index()
         {
             return View(_keyWordService.GetKeyWords());
         }
@@ -38,7 +40,8 @@ namespace Expenses.Controllers
             }
             var created = _keyWordService.Insert(keys);
             TempData["created"] = created.Count;
-            return RedirectToAction(nameof(Index));
+			_movementService.UpdateCategories();
+			return RedirectToAction(nameof(Index));
         }
 
         public IActionResult Edit(int? id)
@@ -75,7 +78,8 @@ namespace Expenses.Controllers
             {
                 var updated = _keyWordService.Update(keyWord);
                 TempData["updated"] = updated.Description;
-                return RedirectToAction(nameof(Index));
+				_movementService.UpdateCategories();
+				return RedirectToAction(nameof(Index));
             }
             catch (ApplicationException e)
             {
