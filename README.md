@@ -12,7 +12,7 @@ O funcionamento consiste em cadastrar as despesas fazendo upload de faturas ou e
 <li>Razor Pages</li>
 <li>Bootstrap 5</li>
 <li>JQuery DataTables</li>
-<li>Bibliotecas Newtonsoft JSON e OfxSharp</li>
+<li>Bibliotecas Chart.js, Newtonsoft JSON e OfxSharp</li>
 <li>Linguagens C#, HTML e JavaScript</li>
 <li>Entity Framework 7</li>
 <li>LINQ</li>
