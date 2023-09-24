@@ -23,5 +23,20 @@ O funcionamento consiste em cadastrar as despesas fazendo upload de faturas ou e
 ## Screenshots
 
 ### Tela Inicial
-<p>Na tela inicial é exibido um resumo das despesas</p>
+<p>Na tela inicial é exibido um resumo das despesas.</p>
 <img src="https://github.com/marliseborba/img/blob/main/expenses/home-index.gif?raw=true"/>
+<br/>
+
+### Upload de Extrato ou Fatura
+<p>Na tela de upload são enviados os arquivos no formato OFX, podendo ser enviados vários de uma só vez.</p>
+<img src="https://github.com/marliseborba/img/blob/main/expenses/upload.gif?raw=true"/>
+<br/>
+
+### Movimentações
+<p>Nesta tela é exibida uma tabela com todas as movimentações cadastradas. O formulário de busca permite filtrar os resultados conforme os critérios desejados.</p>
+<img src="https://github.com/marliseborba/img/blob/main/expenses/movements-edit.gif?raw=true"/>
+<br/>
+
+### Cadastro ou Edição de Estabelecimento ou Categoria
+<p>O cadastro e edição tanto de Estabelecimento quanto de Categoria funciona do mesmo modo, vinculando palavras-chave previamente cadastradas.</p>
+<img src="https://github.com/marliseborba/img/blob/main/expenses/establishment.gif?raw=true"/>
