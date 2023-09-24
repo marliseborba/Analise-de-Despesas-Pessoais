@@ -20,14 +20,23 @@
             </div>
             <div class="col-md-6">
                 <label class="control-label"></i> Palavras-chave</label><br />
-                @foreach (KeyWord key in Model.KeyWords)
-                {
-                    <input type="checkbox" id="SelectedKeys" name="Keys" value="@key.Id" /> @key.Description <br />
-                }
+                <input class="search form-control" type="text" placeholder="Search" id="search" /><br />
+                <div class="chk">
+                    <ul style="width:100%; list-style-type: none; margin:0; padding:0">
+                        @foreach (KeyWord key in Model.KeyWords)
+                        {
+                            <li style="width:50%; float:left">
+                                <label for="SelectecKeys">
+                                    <input type="checkbox" id="SelectedKeys" value="@key.Id" /> @key.Description
+                                </label>
+                            </li>
+                        }
+                    </ul>
+                </div>
             </div>
             <div>
                 <br />
-                <button type="submit" class="btn btn-secondary">Salvar</button>
+                <button id="btn" type="submit" class="btn btn-outline-primary">Salvar</button>
             </div>
         </div>
     </form>
@@ -43,7 +52,6 @@
         });
         $.ajax({
             type: 'POST',
-            url: '/Home/submit',
             traditional: true,
             dataType: "json",
             data: { SelectedSortOrderOptions: optionsVal },
@@ -52,4 +60,19 @@
             },
         });
     });
+
+    (function ($) {
+        $(".search").on('keyup', function (e) {
+            var $this = $(this);
+            var exp = new RegExp($this.val(), 'i');
+            $(".chk li label").each(function () {
+                var $self = $(this);
+                if (!exp.test($self.text())) {
+                    $self.parent().hide();
+                } else {
+                    $self.parent().show();
+                }
+            });
+        });
+    })(jQuery);
 </script>

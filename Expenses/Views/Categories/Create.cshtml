@@ -19,16 +19,62 @@
                 <span asp-validation-for="Category.Name" class="text-danger"></span>
             </div>
             <div class="col-md-6">
-                <label class="control-label"></i> Palavras-chave</label><br />
-                @foreach (KeyWord key in Model.KeyWords)
-                {
-                    <input type="checkbox" id="SelectedKeys" name="Keys" value="@key.Id" /> @key.Description <br />
-                }
+                <label class="control-label">Palavras-chave</label><br />
+                <input class="search form-control" type="text" placeholder="Search" id="search" /><br/>
+                <div class="chk">
+                    <ul style="width:100%; list-style-type: none; margin:0; padding:0">
+                    @foreach (KeyWord key in Model.KeyWords)
+                    {
+                        <li style="width:50%; float:left">
+                        <label for="SelectecKeys">
+                            <input type="checkbox" id="SelectedKeys" value="@key.Id" /> @key.Description
+                        </label>
+                        </li>
+                    }
+                    </ul>
+                </div>
             </div>
             <div>
                 <br />
-                <button type="submit" class="btn btn-secondary">Salvar</button>
+                <button type="submit" class="btn btn-outline-primary">Salvar</button>
             </div>
         </div>
     </form>
 </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js" type="text/javascript"></script>
+<script src="~/lib/jquery/dist/multiselect.min.js"></script>
+
+<script type="text/javascript">
+    $('#SelectedKeys').change(function (e) {
+        var optionsVal = [];
+        $("#SelectedKeys option").each(function () {
+            optionsVal.push($(this).val());
+        });
+        $.ajax({
+            type: 'POST',
+            traditional: true,
+            dataType: "json",
+            data: { SelectedSortOrderOptions: optionsVal },
+            success: function () {
+
+            },
+        });
+    });
+</script>
+<script type="text/javascript" >
+    (function ($) {
+        $(".search").on('keyup', function (e) {
+            var $this = $(this);
+            var exp = new RegExp($this.val(), 'i');
+            $(".chk li label").each(function () {
+                var $self = $(this);
+                if (!exp.test($self.text())) {
+                    $self.parent().hide();
+                } else {
+                    $self.parent().show();
+                }
+            });
+        });
+    })(jQuery);
+ </script>
