@@ -34,9 +34,20 @@ O funcionamento consiste em cadastrar as despesas fazendo upload de faturas ou e
 
 ### Movimentações
 <p>Nesta tela é exibida uma tabela com todas as movimentações cadastradas. O formulário de busca permite filtrar os resultados conforme os critérios desejados.</p>
-<img src="https://github.com/marliseborba/img/blob/main/expenses/movements-edit.gif?raw=true"/>
+<img src="https://github.com/marliseborba/img/blob/main/expenses/movements.gif?raw=true"/>
 <br/>
 
 ### Cadastro ou Edição de Estabelecimento ou Categoria
 <p>O cadastro e edição tanto de Estabelecimento quanto de Categoria funciona do mesmo modo, vinculando palavras-chave previamente cadastradas.</p>
-<img src="https://github.com/marliseborba/img/blob/main/expenses/establishment.gif?raw=true"/>
+<img src="https://github.com/marliseborba/img/blob/main/expenses/establishment-edit.gif?raw=true"/>
+<br/>
+
+### Gerando Gráficos
+<p>Na tela de gráficos é possível filtrar os dados consultados e configurar o modo como serão exibidos no gráfico.</p>
+
+#### Exemplo filtrando movimentações de uma categoria e exibindo separadamente por estabelecimento
+<img src="https://github.com/marliseborba/img/blob/main/expenses/chart-search-estab.gif?raw=true"/>
+<br/>
+
+#### Exemplo filtrando movimentações de uma categoria e exibindo separadamente por pessoa
+<img src="https://github.com/marliseborba/img/blob/main/expenses/chart-search-own.gif?raw=true"/>
