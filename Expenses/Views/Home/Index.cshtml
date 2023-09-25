@@ -1,8 +1,131 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@using System.Globalization;
+@model Expenses.Models.ViewModels.HomeViewModel
+
+@{
+    ViewData["Title"] = "Resumo de Despesas";
+    string month = DateTime.Now.ToString("MMMM", CultureInfo.CreateSpecificCulture("pt-br"));
+    month = char.ToUpper(month[0]) + month.Substring(1);
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<br />
+
+<div class="row">
+    <div class="col-md-6">
+        <h2><i class="bi bi-bar-chart-fill"></i> @ViewData["Title"]</h2>
+        <h1 style="font-size:40px;">@month</h1>
+        <br />
+    </div>
+    <div class="col-md-3">
+        <h5>Entradas</h5>
+        <ul class="list-group">
+            <li class="list-group-item list-group-item-success d-flex justify-content-between align-items-center">
+                Fulana
+                <span class="badge bg-secondary">R$ @Model.CreditMarlise.ToString("F2")</span>
+            </li>
+            <li class="list-group-item list-group-item-success d-flex justify-content-between align-items-center">
+                Ciclana
+                <span class="badge bg-secondary">R$ @Model.CreditMonique.ToString("F2")</span>
+            </li>
+        </ul>
+    </div>
+
+    <div class="col-md-3">
+        <h5>Saídas</h5>
+            <ul class="list-group">
+                <li class="list-group-item list-group-item-danger d-flex justify-content-between align-items-center">
+                    Fulana
+                <span class="badge bg-secondary">R$ @Model.DebitMarlise.ToString("F2")</span>
+                </li>
+                <li class="list-group-item list-group-item-danger d-flex justify-content-between align-items-center">
+                    Ciclana
+                <span class="badge bg-secondary">R$ @Model.DebitMonique.ToString("F2")</span>
+                </li>
+            </ul>
+    </div>
 </div>
+
+<br />
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="container card-body">
+                <h5>Gastos por Categoria</h5>
+                <h6>Últimos 3 meses</h6>
+                <canvas id="chartBTMC"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="container card-body">
+                <h5>Gastos por Categoria</h5>
+                <h6>@month</h6>
+                <canvas id="chartPMC"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="container card-body">
+                <h5>Gastos por Estabelecimento</h5>
+                <h6>@month</h6>
+                <canvas id="chartPME"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script type="text/javascript">
+    const ctxBTMC = document.getElementById('chartBTMC');
+    var chartBTMC = new Chart(ctxBTMC, @Html.Raw(Model.ChartBarThreeMonths));
+    chartBTMC.options.scales.yAxis.ticks =
+    {
+        callback: (val) => {
+            return val.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+        },
+        title: "Valor"
+    };
+    chartBTMC.options.plugins.tooltip.callbacks =
+    {
+        label: function (context) {
+            let label = context.dataset.label || '';
+
+            if (label) {
+                label += ': ';
+            }
+            if (context.parsed.y !== null) {
+                label += new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(context.parsed.y);
+            }
+            return label;
+        }
+    };
+    chartBTMC.options.plugins.title.display = false;
+    chartBTMC.options.plugins.subtitle.display = false;
+    //chartBTMC.options.plugins.title.font.size = 16;
+    //chartBTMC.options.plugins.subtitle.font.size = 14;
+    //chartBTMC.options.plugins.title.text = "";
+    //chartBTMC.options.plugins.subtitle.text = "";
+    chartBTMC.update();
+
+    const ctxPMC = document.getElementById('chartPMC');
+    var chartPMC = new Chart(ctxPMC, @Html.Raw(Model.ChartPieCats));
+    //chartPMC.options.plugins.title.font.size = 16;
+    chartPMC.options.plugins.title.display = false;
+    chartPMC.options.plugins.subtitle.display = false;
+    //chartPMC.options.plugins.subtitle.font.size = 14;
+    //chartPMC.options.plugins.title.text = "";
+    //chartPMC.options.plugins.subtitle.text = "";
+    chartPMC.update();
+
+    const ctxPME = document.getElementById('chartPME');
+    var chartPME = new Chart(ctxPME, @Html.Raw(Model.ChartPieEstabs));
+    chartPME.options.plugins.title.display = false;
+    chartPME.options.plugins.subtitle.display = false;
+    //chartPME.options.plugins.title.font.size = 16;
+    //chartPME.options.plugins.subtitle.font.size = 14;
+    //chartPME.options.plugins.title.text = "";
+    //chartPME.options.plugins.subtitle.text = "";
+    chartPME.update();
+</script>
