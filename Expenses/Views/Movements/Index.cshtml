@@ -30,19 +30,59 @@
             <div class="row">
                 <div class="col-md-6">
                     <br />
-                    <label asp-for="Category.Name" class="control-label"><i class="bi bi-tags"></i> Categoria</label>
-                    <select name="cats" multiple id="SelectedCats" asp-for="Category.Name" asp-items="@(new SelectList(Model.Categories,"Name","Name"))" class="form-control"><option selected>Selecione...</option></select>
+                    <label class="control-label">Pessoas</label><br />
+                    <div class="chkOwns form-control">
+                        <ul style="width:100%; list-style-type: none; margin:0; padding:0">
+                            @foreach (Owner own in Model.Owners)
+                            {
+                                <li style="width:50%; float:left">
+                                    <label for="SelectedOwns">
+                                        <input type="checkbox" id="SelectedOwns" name="owns" checked="@Model.Owns.Any(x => x.Contains(own.Name))" value="@own.Name" /> @own.Name
+                                    </label>
+                                </li>
+                            }
+                        </ul>
+                        <br/>
+                    </div>
                 </div>
+                <div class="col-md-6"></div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <br/>
+                    <label class="control-label">Categorias</label><br />
+                    <input class="searchCats form-control" type="text" placeholder="Buscar categoria" id="searchCats" /><br />
+                    <div class="chkCats">
+                        <ul style="width:100%; list-style-type: none; margin:0; padding:0">
+                            @foreach (Category cat in Model.Categories)
+                            {
+                                <li style="width:50%; float:left">
+                                    <label for="SelectedCats">
+                                        <input type="checkbox" id="SelectedCats" name="cats" checked="@Model.Cats.Any(x => x.Contains(cat.Name))" value="@cat.Name" /> @cat.Name
+                                    </label>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+
                 <div class="col-md-6">
                     <br />
-                    <label asp-for="Establishment.Name" class="control-label"><i class="bi bi-shop-window"></i> Estabelecimento</label>
-                    <select name="estabs" multiple id="SelectedEstabs" asp-for="Establishment.Name" asp-items="@(new SelectList(Model.Establishments,"Name","Name"))" class="form-control"><option selected>Selecione...</option></select>
+                    <label class="control-label">Estabelecimentos</label><br />
+                    <input class="searchEstabs form-control" type="text" placeholder="Buscar estabelecimento" id="searchEstabs" /><br />
+                    <div class="chkEstabs">
+                        <ul style="width:100%; list-style-type: none; margin:0; padding:0">
+                            @foreach (Establishment est in Model.Establishments)
+                            {
+                                <li style="width:50%; float:left">
+                                    <label for="SelectedEstabs">
+                                        <input type="checkbox" id="SelectedEstabs" name="estabs" checked="@Model.Estabs.Any(x => x.Contains(est.Name))" value="@est.Name" /> @est.Name
+                                    </label>
+                                </li>
+                            }
+                        </ul>
+                    </div>
                 </div>
-            </div>
-            <div class="col-md-6">
-                <br />
-                <label asp-for="Owner.Name" class="control-label"><i class="fa-solid fa-user"></i> Autora</label>
-                <select name="owns" multiple id="SelectedOwns" asp-for="Owner.Name" asp-items="@(new SelectList(Model.Owners,"Name","Name"))" class="form-control"><option selected>Selecione...</option></select>
             </div>
                 <div>
                     <br />
@@ -173,46 +213,84 @@
         }
     </tbody>
 </table>
+<script type ="text/javascript">
+    $('#SelectedCats').change(function (e) {
+        var optionsVal = [];
+        $("#SelectedCats option").each(function () {
+            optionsVal.push($(this).val());
+        });
+        $.ajax({
+            type: 'POST',
+            traditional: true,
+            dataType: "json",
+            data: { SelectedSortOrderOptions: optionsVal },
+            success: function () {
 
-<script type="text/javascript">
-    var optionsVal1 = [];
-    $("#SelectedCats option").each(function () {
-        optionsVal1.push($(this).val());
-    });
-    $.ajax({
-        traditional: true,
-        dataType: "json",
-        data: { SelectedSortOrderOptions: optionsVal1 },
-        success: function () {
-
-        },
-    });
-
-    var optionsVal2 = [];
-    $("#SelectedEstabs option").each(function () {
-        optionsVal2.push($(this).val());
-    });
-    $.ajax({
-        traditional: true,
-        dataType: "json",
-        data: { SelectedSortOrderOptions: optionsVal2 },
-        success: function () {
-
-        },
+            },
+        });
     });
 
-    var optionsVal3 = [];
-    $("#SelectedOwns option").each(function () {
-        optionsVal3.push($(this).val());
-    });
-    $.ajax({
-        traditional: true,
-        dataType: "json",
-        data: { SelectedSortOrderOptions: optionsVal3 },
-        success: function () {
+    $('#SelectedEstabs').change(function (e) {
+        var optionsVal = [];
+        $("#SelectedEstabs option").each(function () {
+            optionsVal.push($(this).val());
+        });
+        $.ajax({
+            type: 'POST',
+            traditional: true,
+            dataType: "json",
+            data: { SelectedSortOrderOptions: optionsVal },
+            success: function () {
 
-        },
+            },
+        });
     });
+
+    $('#SelectedOwns').change(function (e) {
+        var optionsVal = [];
+        $("#SelectedOwns option").each(function () {
+            optionsVal.push($(this).val());
+        });
+        $.ajax({
+            type: 'POST',
+            traditional: true,
+            dataType: "json",
+            data: { SelectedSortOrderOptions: optionsVal },
+            success: function () {
+
+            },
+        });
+    });
+
+    (function ($) {
+        $(".searchCats").on('keyup', function (e) {
+            var $this = $(this);
+            var exp = new RegExp($this.val(), 'i');
+            $(".chkCats li label").each(function () {
+                var $self = $(this);
+                if (!exp.test($self.text())) {
+                    $self.parent().hide();
+                } else {
+                    $self.parent().show();
+                }
+            });
+        });
+    })(jQuery);
+
+    (function ($) {
+        $(".searchEstabs").on('keyup', function (e) {
+            var $this = $(this);
+            var exp = new RegExp($this.val(), 'i');
+            $(".chkEstabs li label").each(function () {
+                var $self = $(this);
+                if (!exp.test($self.text())) {
+                    $self.parent().hide();
+                } else {
+                    $self.parent().show();
+                }
+            });
+        });
+    })(jQuery);
 </script>
 
 <script type="text/javascript">
