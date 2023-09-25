@@ -134,10 +134,39 @@ namespace Expenses.Data
             _context.SaveChanges();
         }
 
+        public void SeedFake()
+        {
+            if (!_context.Owner.Any())
+            {
+                SeedFakeOwner();
+            }
+            if (!_context.KeyWord.Any())
+            {
+                UploadFakeKeyWord();
+            }
+            if (!_context.Category.Any())
+            {
+                UploadFakeCategory();
+            }
+            if (!_context.Establishment.Any())
+            {
+                UploadFakeEstablishment();
+            }
+            _context.SaveChanges();
+        }
+
         public void SeedOwner()
         {
             Owner own1 = new Owner("Marlise", "marlise", "8734884-4", "575886f1-0801-45a2-9d71-f7c805a58d51");
             Owner own2 = new Owner("Monique", "monique", "5644290-0", "");
+            _context.Add(own1);
+            _context.Add(own2);
+            _context.SaveChanges();
+        }
+        public void SeedFakeOwner()
+        {
+            Owner own1 = new Owner("Fulana", "fulana", "conta-deb-1", "conta-cred-1");
+            Owner own2 = new Owner("Ciclana", "ciclana", "conta-deb-2", "conta-cred-2");
             _context.Add(own1);
             _context.Add(own2);
             _context.SaveChanges();
@@ -148,6 +177,30 @@ namespace Expenses.Data
             if (!_context.KeyWord.Any())
             {
                 string path = @"G:\Meu Drive\Dev\Expenses\Expenses\Seed\KeyWord.csv";
+                List<KeyWord> keyWords = new List<KeyWord>();
+                using (StreamReader sr = File.OpenText(path))
+                {
+                    while (!sr.EndOfStream)
+                    {
+                        string line = sr.ReadLine();
+                        KeyWord keyWord = new KeyWord(line);
+                        //string[] line = sr.ReadLine().Split(",");
+                        //KeyWord keyWord = new KeyWord(int.Parse(line[0]), line[1]);
+                        keyWords.Add(keyWord);
+                        _context.Add(keyWord);
+                    }
+                }
+                _context.SaveChanges();
+                return keyWords;
+            }
+            return null;
+        }
+
+        public ICollection<KeyWord> UploadFakeKeyWord()
+        {
+            if (!_context.KeyWord.Any())
+            {
+                string path = @"G:\Meu Drive\Dev\Expenses\Expenses\Seed\Fake\FakeKeyWord.csv";
                 List<KeyWord> keyWords = new List<KeyWord>();
                 using (StreamReader sr = File.OpenText(path))
                 {
@@ -194,6 +247,33 @@ namespace Expenses.Data
             return null;
         }
 
+        public ICollection<Category> UploadFakeCategory()
+        {
+            if (!_context.Category.Any())
+            {
+                string path = @"G:\Meu Drive\Dev\Expenses\Expenses\Seed\Fake\FakeCategory.csv";
+                List<Category> categories = new List<Category>();
+                using (StreamReader sr = File.OpenText(path))
+                {
+                    while (!sr.EndOfStream)
+                    {
+                        string line = sr.ReadLine();
+                        Category category = new Category(line);
+                        //string[] line = sr.ReadLine().Split(",");
+                        //Category category = new Category(int.Parse(line[0]), line[1]);
+                        categories.Add(category);
+                        _context.Add(category);
+                    }
+                }
+                _context.SaveChanges();
+                return categories;
+            }
+
+            _context.SaveChanges();
+
+            return null;
+        }
+
         public ICollection<Establishment> UploadEstablishment()
         {
             if (!_context.Establishment.Any())
@@ -218,41 +298,28 @@ namespace Expenses.Data
             return null;
         }
 
-        public ICollection<Category> CategorySeeding()
+        public ICollection<Establishment> UploadFakeEstablishment()
         {
-            Category cat1 = new Category(0, "Mercado");
-            Category cat2 = new Category(1, "Farmácia");
-            Category cat3 = new Category(2, "Bichos");
-            Category cat4 = new Category(3, "Aluguel");
-            Category cat5 = new Category(4, "Luz");
-            Category cat6 = new Category(5, "Água");
-            Category cat7 = new Category(6, "Internet");
-            Category cat8 = new Category(7, "Transportes");
-            Category cat9 = new Category(8, "Lanches");
-            //Category cat = new Category(, "");
-            //Category cat = new Category(, "");
-            //Category cat = new Category(, "");
-
-            ICollection<Category> categories = new List<Category>();
-            categories.Add(cat1);
-            categories.Add(cat2);
-            categories.Add(cat3);
-            categories.Add(cat4);
-            categories.Add(cat5);
-            categories.Add(cat6);
-            categories.Add(cat7);
-            categories.Add(cat8);
-            categories.Add(cat9);
-
-            return categories;
-        }
-
-        public ICollection<SubCategory> SubCategorySeeding()
-        {
-            //SubCategory sub1 = new SubCategory(0, "L", )    
-
-            ICollection<SubCategory> subCategories = new List<SubCategory>();
-            return subCategories;
+            if (!_context.Establishment.Any())
+            {
+                string path = @"G:\Meu Drive\Dev\Expenses\Expenses\Seed\Fake\FakeEstablishment.csv";
+                List<Establishment> establishments = new List<Establishment>();
+                using (StreamReader sr = File.OpenText(path))
+                {
+                    while (!sr.EndOfStream)
+                    {
+                        string line = sr.ReadLine();
+                        Establishment establishment = new Establishment(line);
+                        //string[] line = sr.ReadLine().Split(",");
+                        //Establishment establishment = new Establishment(int.Parse(line[0]), line[1]);
+                        establishments.Add(establishment);
+                        _context.Add(establishment);
+                    }
+                }
+                _context.SaveChanges();
+                return establishments;
+            }
+            return null;
         }
     }
 }
