@@ -85,7 +85,7 @@ namespace Expenses.Models.Charts
     public class Subtitle
     {
         public bool display { get; set; } = true;
-        public string text { get; set; } = "";
+        public List<string> text { get; set; } = new List<string>();
         public Font font { get; set; } = new Font(16);
 
 		public Subtitle()
@@ -94,7 +94,7 @@ namespace Expenses.Models.Charts
 
         public Subtitle(string text)
         {
-            this.text = text;
+            this.text.Add(text);
         }
     }
 
