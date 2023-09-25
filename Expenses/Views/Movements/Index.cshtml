@@ -119,22 +119,22 @@
 <table id="myTable" class="table table-hover">
     <thead>
         <tr>
-            <th>
+            <th style="border-bottom-color:#444444">
                 Autora
             </th>
-            <th>
+            <th style="border-bottom-color:#444444">
                 Descrição
             </th>
-            <th>
+            <th style="border-bottom-color:#444444">
                 Data
             </th>
-            <th>
+            <th style="border-bottom-color:#444444">
                 Valor
             </th>
-            <th>
+            <th style="border-bottom-color:#444444">
                 Estabelecimento
             </th>
-            <th>
+            <th style="border-bottom-color:#444444">
                 Categorias
             </th>
         </tr>
@@ -142,7 +142,7 @@
     <tbody>
         @foreach (var item in Model.Movements)
         {
-            <tr>
+            <tr style="border-bottom-color:#444444">
                 <td>
                     @Html.DisplayFor(modelItem => item.Owner.Name)
                 </td>
@@ -220,7 +220,8 @@
         $('#myTable').dataTable({
             "language": {
                 "info": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
-                "infoEmpty": "Mostrando 0 to 0 of 0 registros",
+                "infoEmpty": "Não há registros",
+                "emptyTable": "Não há registros",
                 "infoFiltered": "(filtrado de _MAX_ registros)",
                 "lengthMenu": "Mostrar _MENU_ registros",
                 "search": "Buscar:",
@@ -231,8 +232,8 @@
                     "previous": "Anterior"
                 },
                 "aria": {
-                    "sortAscending": ": clique para ordenar crescente",
-                    "sortDescending": ": clique para ordenar decrescente"
+                    "sortAscending": ": clique para organizar em order crescente",
+                    "sortDescending": ": clique para organizar em ordem decrescente"
                 }
             },
 

@@ -41,7 +41,7 @@
 <h2><i class="bi bi-shop-window"></i> @ViewData["Title"]</h2>
 <br />
 
-<input type="button" onclick="location.href='@Url.Action("Create", "Establishments")'" class="btn btn-outline-primary" value="Criar Estabelecimento" />
+<input id="btn" type="button" onclick="location.href='@Url.Action("Create", "Establishments")'" class="btn btn-outline-primary" value="Criar Estabelecimento" />
 <br />
 <br />
 
@@ -65,7 +65,7 @@
 }
 
 
-<table id="myTable" class="table">
+<table id="myTable" class="table table-hover">
     <thead>
         <tr>
             <th width="30">

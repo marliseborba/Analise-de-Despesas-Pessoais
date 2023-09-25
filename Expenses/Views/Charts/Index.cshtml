@@ -5,14 +5,13 @@
 }
 
 <br />
-<br />
+
 <h2><i class="bi bi-graph-up"></i> @ViewData["Title"]</h2>
 <br />
 
 <p class="d-inline-flex gap-1">
     <a class="btn btn-outline-primary collapsed" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
-        <i cla
-            ss="bi bi-search"></i> Buscar
+        <i class="bi bi-search"></i> Buscar
     </a>
 </p>
 <div class="collapse" id="collapseExample">
@@ -60,8 +59,8 @@
                             <option>Selecione...</option>
                             <option value="line">Linha</option>
                             <option value="bar">Barra</option>
-                            <option>Pizza</option>
-                            <option>Donut</option>
+                            <option value="pie">Pizza</option>
+                            <option value="doughnut">Donut</option>
                         </select>
                     </div>
                     <div class="col-md-6">
@@ -94,13 +93,11 @@
     </div>
 </div>
 
-<br />
 
 <div class="container">
-    <div class="col-md-12">
-        <canvas id="myChart"></canvas>
-    </div>
+    <canvas id="myChart" style="box-sizing:border-boxl"></canvas>
 </div>
+
 <br />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js" type="text/javascript"></script>
 <script src="~/lib/jquery/dist/multiselect.min.js"></script>
@@ -156,9 +153,6 @@
         traditional: true,
         dataType: "json",
         data: { SelectedSortOrderOptions: optionsVal1, optionsVal2, optionsVal3 },
-        success: function () {
-
-        },
     });
 
 </script>
