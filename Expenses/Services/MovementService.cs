@@ -231,9 +231,9 @@ namespace Expenses.Services
                         string identifier = item.TransactionId;
                         string description = item.Memo;
                         Establishment estab = new Establishment();
-                        estab = CheckEstab(description);
+                        //estab = CheckEstab(description);
                         Movement exp = new Movement(description, date, value, identifier, Enum.Parse<MovementType>(accType));
-                        exp.OwnerId = own.Id;
+                        exp.Owner = own;
                         if (estab != null && estab.Id > 0)
                         {
                             exp.EstablishmentId = estab.Id;

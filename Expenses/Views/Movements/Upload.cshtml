@@ -44,8 +44,8 @@ else
     </table>
     </div>
 
-    <table class="table">
-        <tr class="table-default">
+    <table class="table" style="margin-right:0px; padding-right:0px;">
+        <tr class="table-default" style="margin-right:0px; padding-right:0px;">
             <th>
                 Movimentações: @Model.Count()
             </th>
@@ -55,15 +55,15 @@ else
             <th class="text-danger">
                 Saídas: @Model.Where(x => x.Value < 0).Sum(x => x.Value).ToString("F2")
             </th>
-            <th style="text-align:right">
-                <input type="button" onclick="location.href='@Url.Action("SaveInvoice", "Movements")'" class="btn btn-outline-primary btn-sm" value="Salvar no Banco de Dados" />
+            <th style="text-align:right; margin-right:0px; padding-right:0px;">
+                <input type="button" onclick="location.href='@Url.Action("SaveInvoice", "Movements")'" class="btn btn-outline-success btn-sm" value="Salvar no Banco de Dados" />
             </th>
         </tr>
     </table>
 
     <table class="table table-hover">
         <thead>
-            <tr>
+            <tr class="table-active">
                 <th>
                     Autora
                 </th>
@@ -78,12 +78,6 @@ else
                 </th>
                 <th>
                     Tipo
-                </th>
-                <th>
-                    Estabelecimento
-                </th>
-                <th>
-                    Categorias
                 </th>
             </tr>
         </thead>
@@ -105,23 +99,6 @@ else
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.MovementType)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Establishment.Name)
-                    </td>
-                    <td>
-                        @{
-                            var count = 1;
-                            foreach (var i in item.Categories)
-                            {
-                                if (count < item.Categories.Count)
-                                    @($"{i.Name}{", "}")
-                                else
-                                    @i.Name
-                                ;
-                                count++;
-                            }
-                        }
                     </td>
                 </tr>
             }

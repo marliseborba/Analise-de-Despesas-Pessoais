@@ -47,9 +47,58 @@ namespace Expenses.Services
             chart.data = data;
             chart.type = type;
             chart.options.plugins.title.text = "Gastos por " + dataT;
-            chart.options.plugins.subtitle = new Subtitle(viewModel.MinDate.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture) + " - " + viewModel.MaxDate.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture));
+            List<string> subtitle = new List<string>();
+            subtitle.Add("De " + viewModel.MinDate.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture) + " a " + viewModel.MaxDate.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture));
             chart.options.plugins.title.text = chart.options.plugins.title.text.ToUpper();
-            chart.options.plugins.subtitle.text = chart.options.plugins.subtitle.text.ToUpper();
+
+            string sub = "Categorias: ";
+            if (viewModel.Cats.Count > 0)
+            {
+                sub = sub + viewModel.Cats[0];
+                foreach(var cat in viewModel.Cats.Skip(1)) 
+                {
+                    sub = sub + ", " + cat;
+                }
+                subtitle.Add(sub);
+            }
+            else
+            {
+                sub = sub + "Todas";
+                subtitle.Add(sub);
+            }
+
+            sub = "Estabelecimentos: ";
+            if (viewModel.Estabs.Count > 0)
+            {
+                sub = sub + viewModel.Estabs[0];
+                foreach (var est in viewModel.Estabs.Skip(1))
+                {
+                    sub = sub + ", " + est;
+                }
+                subtitle.Add(sub);
+            }
+            else
+            {
+                sub = sub + "Todos";
+                subtitle.Add(sub);
+            }
+
+            sub = "Pessoas: ";
+            if (viewModel.Owns.Count > 0)
+            {
+                sub = sub + viewModel.Owns[0];
+                foreach (var own in viewModel.Owns.Skip(1))
+                {
+                    sub = sub + ", " + own;
+                }
+                subtitle.Add(sub);
+            }
+            else
+            {
+                sub = sub + "Todas";
+                subtitle.Add(sub);
+            }
+            chart.options.plugins.subtitle.text = subtitle;
 
             MovementViewModel movView = new MovementViewModel();
             movView.MinDate = viewModel.MinDate;
@@ -94,6 +143,40 @@ namespace Expenses.Services
                     datas = _context.Establishment.Select(x => x.Name).ToList();
                 }
                 datas.Add("Establishment");
+            }
+            if (dataT != null && dataT.Equals("Ano"))
+            {
+                datas = viewModel.Estabs;
+                if ((datas.Count == 1 && datas.FirstOrDefault().Equals("Selecione...")) || datas.Count == 0)
+                {
+                    for (int i = viewModel.MinDate.Year; i <= viewModel.MaxDate.Year; i++)
+                    {
+                        datas.Add(i.ToString());
+                    }
+                }
+                datas.Add("Year");
+            }
+            if (dataT != null && dataT.Equals("Mês"))
+            {
+                datas = viewModel.Estabs;
+                if ((datas.Count == 1 && datas.FirstOrDefault().Equals("Selecione...")) || datas.Count == 0)
+                {
+                    if (viewModel.MinDate.Year == viewModel.MaxDate.Year)
+                    {
+                        for (int i = viewModel.MinDate.Month; i <= viewModel.MaxDate.Month; i++)
+                        {
+                            datas.Add(i.ToString());
+                        }
+                    }
+                    else
+                    {
+                        for (int i = 1; i <= 12; i++)
+                        {
+                            datas.Add(i.ToString());
+                        }
+                    }
+                }
+                datas.Add("Month");
             }
 
             List<Object> times = new List<object>();
@@ -141,8 +224,7 @@ namespace Expenses.Services
                 ChartPie chartPie = new ChartPie();
                 chartPie.type = type;
                 chartPie.options.plugins.title.text = "Gastos por " + dataT;
-                chartPie.options.plugins.subtitle = new ChartPie.Option.Plugins.Subtitle(viewModel.MinDate.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture) + " - " + viewModel.MaxDate.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture));
-
+                chartPie.options.plugins.subtitle.text = subtitle;
                 chartPie.data = FormatToPie(movements, datas);
                 return JsonConvert.SerializeObject(chartPie);
             }
@@ -315,7 +397,7 @@ namespace Expenses.Services
             List<double> points = new List<double>();
 
             // DataSet: Owner/Categoria/Estab
-            if (type.Equals("Category"))
+            if (type != null && type.Equals("Category"))
             {
                 datas.Remove(type);
                 foreach (var item in datas)
@@ -339,7 +421,7 @@ namespace Expenses.Services
                 data.datasets.Add(dataSet);
             }
 
-            if (type.Equals("Establishment"))
+            if (type != null && type.Equals("Establishment"))
             {
                 datas.Remove(type);
                 foreach (var item in datas)
@@ -363,7 +445,7 @@ namespace Expenses.Services
                 data.datasets.Add(dataSet);
             }
 
-            if (type.Equals("Owner"))
+            if (type != null && type.Equals("Owner"))
             {
                 datas.Remove(type);
                 foreach (var item in datas)
@@ -380,6 +462,54 @@ namespace Expenses.Services
                             sum += ToPositive(v);
                         }
                         labels.Add(item);
+                        points.Add(sum);
+                    }
+                    dataSet.data = points;
+                }
+                data.datasets.Add(dataSet);
+            }
+            if (type != null && type.Equals("Year"))
+            {
+                datas.Remove(type);
+                foreach (var item in datas)
+                {
+                    List<Movement> movs = new List<Movement>();
+                    movs = movements.Where(x => x.Date != null && x.Date.Year.ToString().Equals(item)).ToList();
+                    if (movs.Count() > 0)
+                    {
+                        List<double> values = new List<double>();
+                        values = movs.Select(x => x.Value).ToList();
+                        double sum = 0.0;
+                        foreach (double v in values)
+                        {
+                            sum += ToPositive(v);
+                        }
+                        labels.Add(item);
+                        points.Add(sum);
+                    }
+                    dataSet.data = points;
+                }
+                data.datasets.Add(dataSet);
+            }
+            if (type != null && type.Equals("Month"))
+            {
+                datas.Remove(type);
+                foreach (var item in datas)
+                {
+                    List<Movement> movs = new List<Movement>();
+                    movs = movements.Where(x => x.Date != null && x.Date.Month.ToString().Equals(item)).ToList();
+                    if (movs.Count() > 0)
+                    {
+                        List<double> values = new List<double>();
+                        values = movs.Select(x => x.Value).ToList();
+                        double sum = 0.0;
+                        foreach (double v in values)
+                        {
+                            sum += ToPositive(v);
+                        }
+                        string month = new DateTime(2023, int.Parse(item), 1).ToString("MMMM", CultureInfo.CreateSpecificCulture("pt-br"));
+                        month = char.ToUpper(month[0]) + month.Substring(1);
+                        labels.Add(month);
                         points.Add(sum);
                     }
                     dataSet.data = points;
