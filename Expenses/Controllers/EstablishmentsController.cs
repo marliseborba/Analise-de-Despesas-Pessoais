@@ -13,21 +13,18 @@ namespace Expenses.Controllers
         private readonly EstablishmentService _establishmentService;
         private readonly MovementService _movementService;
         private readonly CategoryService _categoryService;
-        private readonly SubCategoryService _subCategoryService;
         private readonly KeyWordService _keyWordService;
 
         public EstablishmentsController(SeedingService seedService,
                                         EstablishmentService establishmentService,
                                         MovementService movementService,
                                         CategoryService categoryService,
-                                        SubCategoryService subCategoryService,
                                         KeyWordService keyWordService)
         {
             _seedService = seedService;
             _establishmentService = establishmentService;
             _movementService = movementService;
             _categoryService = categoryService;
-            _subCategoryService = subCategoryService;
             _keyWordService = keyWordService;
         }
 

@@ -18,7 +18,6 @@ namespace Expenses.Controllers
         private readonly SeedingService _seedingService;
         private readonly MovementService _movementService;
         private readonly CategoryService _categoryService;
-        private readonly SubCategoryService _subCategoryService;
         private readonly EstablishmentService _establishmentService;
         private readonly OwnerService _ownerService;
 
@@ -26,7 +25,6 @@ namespace Expenses.Controllers
             SeedingService seedingService,
             MovementService movementService,
             CategoryService categoryService,
-            SubCategoryService subCategoryService,
             EstablishmentService establishmentService,
             OwnerService ownerService)
         {
@@ -34,14 +32,13 @@ namespace Expenses.Controllers
             _seedingService = seedingService;
             _movementService = movementService;
             _categoryService = categoryService;
-            _subCategoryService = subCategoryService;
             _establishmentService = establishmentService;
             _ownerService = ownerService;
         }
 
         public IActionResult Index()
         {
-            _seedingService.SeedInitial();
+            _seedingService.SeedFake();
             //_movementService.UpdateEstablishments();
             //var catUpdated = _movementService.UpdateCategories();
             //TempData["catUpdated"] = catUpdated.Count;
