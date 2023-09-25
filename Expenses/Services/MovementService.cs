@@ -117,17 +117,17 @@ namespace Expenses.Services
 
             result = result.Where(x => x.Date >= viewModel.MinDate && x.Date <= viewModel.MaxDate).ToList();
 
-            if (viewModel.Owns.FirstOrDefault() != "Selecione...")
+            if (viewModel.Owns.FirstOrDefault() != "Selecione..." && viewModel.Owns.Count > 0)
             {
                 result = result.Where(x => viewModel.Owns.Contains(x.Owner.Name)).ToList();
             }
 
-            if (viewModel.Estabs.FirstOrDefault() != "Selecione...")
+            if (viewModel.Estabs.FirstOrDefault() != "Selecione..." && viewModel.Estabs.Count > 0)
             {
                 result = result.Where(x => x.Establishment != null && viewModel.Estabs.Contains(x.Establishment.Name)).ToList();
             }
             
-            if (viewModel.Cats.FirstOrDefault() != "Selecione...")
+            if (viewModel.Cats.FirstOrDefault() != "Selecione..." && viewModel.Cats.Count > 0)
             {
                 result = result.Where(x => x.Categories != null && x.Categories.Any(t => viewModel.Cats.Contains(t.Name))).ToList();
             }

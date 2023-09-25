@@ -17,7 +17,7 @@ namespace Expenses.Models
         public Owner Owner { get; set; }
         public int? OwnerId { get; set; }
         public MovementType MovementType { get; set; }
-        public Establishment? Establishment { get; set; }
+        public Establishment Establishment { get; set; }
         public int? EstablishmentId { get; set; }
         public ICollection<Category>? Categories { get; set; } = new List<Category>();
         public SubCategory? SubCategory { get; set; }
@@ -37,6 +37,7 @@ namespace Expenses.Models
             Identifier = identifier;
             Establishment = establishment;
         }
+
         public Movement(string description, DateTime date, double value, string identifier, MovementType type, Owner owner, Establishment establishment)
         {
             Description = description;
@@ -58,6 +59,14 @@ namespace Expenses.Models
             Establishment = establishment;
         }
 
+        public Movement(string description, DateTime date, double value, string identifier, MovementType type)
+        {
+            Description = description;
+            Date = date;
+            Value = value;
+            Identifier = identifier;
+            MovementType = type;
+        }
         public Movement(string description, DateTime date, double value, string identifier, Owner owner, List<Category> categories)
         {
             Description = description;

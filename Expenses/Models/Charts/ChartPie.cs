@@ -77,7 +77,7 @@ namespace Expenses.Models.Charts
                 public class Title
                 {
                     public bool display { get; set; } = true;
-                    public string text { get; set; } = "";
+                    public string text { get; set; }
                     public Font font { get; set; } = new Font(20);
 
                     public Title()
@@ -93,7 +93,7 @@ namespace Expenses.Models.Charts
                 public class Subtitle
                 {
                     public bool display { get; set; } = true;
-                    public string text { get; set; } = "";
+                    public string text { get; set; }
                     public Font font { get; set; } = new Font(16);
 
                     public Subtitle()

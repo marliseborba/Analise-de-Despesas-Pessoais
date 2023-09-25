@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using System;
 using System.Data.SqlTypes;
 using System.Globalization;
+using static Expenses.Models.Charts.ChartPie;
 using static Expenses.Models.Charts.ChartPie.Option.Plugins.Subtitle;
 
 namespace Expenses.Services
@@ -38,17 +39,17 @@ namespace Expenses.Services
         {
             Chart chart = new Chart();
             Models.Charts.Data data = new Models.Charts.Data();
-            List<DataSet> dataSets = new List<DataSet>();
 
             string type = viewModel.EType;
             string dataT = viewModel.EData;
             string time = viewModel.ETime;
 
-            data.datasets = dataSets;
             chart.data = data;
             chart.type = type;
             chart.options.plugins.title.text = "Gastos por " + dataT;
             chart.options.plugins.subtitle = new Subtitle(viewModel.MinDate.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture) + " - " + viewModel.MaxDate.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture));
+            chart.options.plugins.title.text = chart.options.plugins.title.text.ToUpper();
+            chart.options.plugins.subtitle.text = chart.options.plugins.subtitle.text.ToUpper();
 
             MovementViewModel movView = new MovementViewModel();
             movView.MinDate = viewModel.MinDate;
@@ -70,7 +71,7 @@ namespace Expenses.Services
             if(dataT.Equals("Pessoa"))
             {
                 datas = viewModel.Owns;
-                if (datas.Count == 1 && datas.FirstOrDefault().Equals("Selecione..."))
+                if ((datas.Count == 1 && datas.FirstOrDefault().Equals("Selecione...")) || datas.Count == 0)
                 {
                     datas = _context.Owner.Select(x => x.Name).ToList();
                 }
@@ -79,7 +80,7 @@ namespace Expenses.Services
             if(dataT.Equals("Categoria"))
             {
                 datas = viewModel.Cats;
-                if (datas.Count == 1 && datas.FirstOrDefault().Equals("Selecione..."))
+                if ((datas.Count == 1 && datas.FirstOrDefault().Equals("Selecione...")) || datas.Count == 0)
                 {
                     datas = _context.Category.Select(x => x.Name).ToList();
                 }
@@ -88,7 +89,7 @@ namespace Expenses.Services
             if (dataT.Equals("Estabelecimento"))
             {
                 datas = viewModel.Estabs;
-                if (datas.Count == 1 && datas.FirstOrDefault().Equals("Selecione..."))
+                if ((datas.Count == 1 && datas.FirstOrDefault().Equals("Selecione...")) || datas.Count == 0)
                 {
                     datas = _context.Establishment.Select(x => x.Name).ToList();
                 }
@@ -122,6 +123,17 @@ namespace Expenses.Services
             if (type.Equals("line"))
             {
                 data.datasets = FormatToPoint(movements, datas, times);
+            }
+
+            if (type.Equals("pie") || type.Equals("doughnut"))
+            {
+                ChartPie chartPie = new ChartPie();
+                chartPie.type = type;
+                //chartPie.options.plugins.title.text = "Gastos por " + dataT;
+                //chartPie.options.plugins.subtitle = new ChartPie.Option.Plugins.Subtitle(viewModel.MinDate.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture) + " - " + viewModel.MaxDate.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture));
+
+                chartPie.data = FormatToPie(movements, datas);
+                return JsonConvert.SerializeObject(chartPie);
             }
 
             return JsonConvert.SerializeObject(chart);
@@ -244,7 +256,7 @@ namespace Expenses.Services
                         foreach (var i in times)
                         {
                             List<Movement> movs = new List<Movement>();
-                            movs = movements.Where(x => x.Date.Year == (int)i && x.Establishment.Name.ToLower().Contains(item.ToLower())).ToList();
+                            movs = movements.Where(x => x.Date.Year == (int)i && x.Establishment != null && x.Establishment.Name.ToLower().Contains(item.ToLower())).ToList();
                             double sum = ToPositive(movs.Sum(x => x.Value));
                             if (sum > 0)
                             {
@@ -260,7 +272,7 @@ namespace Expenses.Services
                         foreach (var i in times)
                         {
                             List<Movement> movs = new List<Movement>();
-                            movs = movements.Where(x => x.Date.Month == (int)i && x.Establishment.Name.ToLower().Contains(item.ToLower())).ToList();
+                            movs = movements.Where(x => x.Date.Month == (int)i && x.Establishment != null && x.Establishment.Name.ToLower().Contains(item.ToLower())).ToList();
                             string month = new DateTime(2023, (int)i, 1).ToString("MMMM", CultureInfo.CreateSpecificCulture("pt-br"));
                             month = char.ToUpper(month[0]) + month.Substring(1);
                             double sum = ToPositive(movs.Sum(x => x.Value));
@@ -279,6 +291,68 @@ namespace Expenses.Services
                 }
             }
             return dataSets;
+        }
+
+        public ChartPie.Data FormatToPie(List<Movement> movements, List<string> datas)
+        {
+            ChartPie.Data data = new ChartPie.Data();
+            ChartPie.Data.DataSet dataSet = new ChartPie.Data.DataSet();
+
+            string type = datas.LastOrDefault();
+
+            List<string> labels = new List<string>();
+            List<double> points = new List<double>();
+
+            // Eixo X: Ano/Mês e DataSet: Owner/Categoria/Estab
+            if (type.Equals("Category"))
+            {
+                datas.Remove(type);
+                foreach (var item in datas)
+                {
+                    List<Movement> movs = new List<Movement>();
+                    movs = movements.Where(x => x.Categories.Any(x => x.Name.ToLower().Contains(item.ToLower()))).ToList();
+                    if (movs.Count() > 0)
+                    {
+                        List<double> values = new List<double>();
+                        values = movs.Select(x => x.Value).ToList();
+                        double sum = 0.0;
+                        foreach (double v in values)
+                        {
+                            sum += ToPositive(v);
+                        }
+                        labels.Add(item);
+                        points.Add(sum);
+                    }
+                    dataSet.data = points;
+                }
+                data.datasets.Add(dataSet);
+            }
+
+            if (type.Equals("Establishment"))
+            {
+                datas.Remove(type);
+                foreach (var item in datas)
+                {
+                    List<Movement> movs = new List<Movement>();
+                    movs = movements.Where(x => x.Establishment != null && x.Establishment.Name.ToLower().Contains(item.ToLower())).ToList();
+                    if (movs.Count() > 0)
+                    {
+                        List<double> values = new List<double>();
+                        values = movs.Select(x => x.Value).ToList();
+                        double sum = 0.0;
+                        foreach (double v in values)
+                        {
+                            sum += ToPositive(v);
+                        }
+                        labels.Add(item);
+                        points.Add(sum);
+                    }
+                    dataSet.data = points;
+                }
+                data.datasets.Add(dataSet);
+            }
+            data.labels = labels;
+            return data;
         }
 
         public ChartViewModel Example()

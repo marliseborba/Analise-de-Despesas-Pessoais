@@ -26,12 +26,13 @@ namespace Expenses.Services
                 .FirstOrDefault();
         }
 
-        public void Insert(Category category, List<int> keys)
+        public Category Insert(Category category, List<int> keys)
         {
             List<KeyWord> news = _context.KeyWord.Where(x => keys.Contains(x.Id)).ToList();
             category.KeyWords = news;
             _context.Add(category);
             _context.SaveChanges();
+            return category;
         }
 
         public Category Update(Category category, List<int> keys)
