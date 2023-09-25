@@ -20,32 +20,66 @@
             <fieldset class="form-group" style="border:1px solid;border-radius:4px;padding:10px">
                 <legend style="font-size:16px">Filtros:</legend>
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-3">
                         <label asp-for="MinDate" class="control-label">Início</label>
-                        <input type="date" asp-for="MinDate" class="form-control form-control-sm" value="@Model.MinDate.ToString("yyyy-MM-dd")" />
+                        <input type="date" asp-for="MinDate" class="form-control" value="@Model.MinDate.ToString("yyyy-MM-dd")" />
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-3">
                         <label asp-for="MaxDate" class="control-label">Fim</label>
-                        <input type="date" asp-for="MaxDate" class="form-control form-control-sm" value="@Model.MaxDate.ToString("yyyy-MM-dd")" />
+                        <input type="date" asp-for="MaxDate" class="form-control" value="@Model.MaxDate.ToString("yyyy-MM-dd")" />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="control-label">Pessoas</label><br />
+                        <div class="chkOwns form-control">
+                            <ul style="width:100%; list-style-type: none; margin:0; padding:0">
+                                @foreach (Owner own in Model.Owners)
+                                {
+                                    <li style="width:50%; float:left">
+                                        <label for="SelectedOwns">
+                                            <input type="checkbox" id="SelectedOwns" name="owns" checked="@Model.Owns.Any(x => x.Contains(own.Name))" value="@own.Name" /> @own.Name
+                                        </label>
+                                    </li>
+                                }
+                            </ul>
+                            <br />
+                        </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-6">
                         <br />
-                        <label asp-for="Category.Name" class="control-label"><i class="bi bi-tags"></i> Categoria</label>
-                        <select name="cats" multiple id="SelectedCats" asp-for="Category.Name" asp-items="@(new SelectList(Model.Categories,"Name","Name"))" class="form-control form-control-sm"><option selected>Selecione...</option></select>
+                        <label class="control-label">Categorias</label><br />
+                        <input class="searchCats form-control" type="text" placeholder="Buscar categoria" id="searchCats" /><br />
+                        <div class="chkCats">
+                            <ul style="width:100%; list-style-type: none; margin:0; padding:0">
+                                @foreach (Category cat in Model.Categories)
+                                {
+                                    <li style="width:50%; float:left">
+                                        <label for="SelectedCats">
+                                            <input type="checkbox" id="SelectedCats" name="cats" checked="@Model.Cats.Any(x => x.Contains(cat.Name))" value="@cat.Name" /> @cat.Name
+                                        </label>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
                     </div>
+
                     <div class="col-md-6">
                         <br />
-                        <label asp-for="Establishment.Name" class="control-label"><i class="bi bi-shop-window"></i> Estabelecimento</label>
-                        <select name="estabs" multiple id="SelectedEstabs" asp-for="Establishment.Name" asp-items="@(new SelectList(Model.Establishments,"Name","Name"))" class="form-control form-control-sm"><option selected>Selecione...</option></select>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <br />
-                        <label asp-for="Owner.Name" class="control-label"><i class="fa-solid fa-user"></i> Pessoa</label>
-                        <select name="owns" multiple id="SelectedOwns" asp-for="Owner.Name" asp-items="@(new SelectList(Model.Owners,"Name","Name"))" class="form-control form-control-sm"><option selected>Selecione...</option></select>
+                        <label class="control-label">Estabelecimentos</label><br />
+                        <input class="searchEstabs form-control" type="text" placeholder="Buscar estabelecimento" id="searchEstabs" /><br />
+                        <div class="chkEstabs">
+                            <ul style="width:100%; list-style-type: none; margin:0; padding:0">
+                                @foreach (Establishment est in Model.Establishments)
+                                {
+                                    <li style="width:50%; float:left">
+                                        <label for="SelectedEstabs">
+                                            <input type="checkbox" id="SelectedEstabs" name="estabs" checked="@Model.Estabs.Any(x => x.Contains(est.Name))" value="@est.Name" /> @est.Name
+                                        </label>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </fieldset>
@@ -55,7 +89,7 @@
                 <div class="row">
                     <div class="col-md-6">
                         <label asp-for="EType" class="control-label"><i class="bi bi-graph-up"></i> Tipo de Gráfico</label>
-                        <select asp-for="EType" class="form-control form-control-sm">
+                        <select asp-for="EType" class="form-control">
                             <option>Selecione...</option>
                             <option value="line">Linha</option>
                             <option value="bar">Barra</option>
@@ -65,11 +99,11 @@
                     </div>
                     <div class="col-md-6">
                         <label asp-for="EData" class="control-label"><i class="bi bi-bar-chart-steps"></i> Separar por</label>
-                        <select asp-for="EData" class="form-control form-control-sm">
+                        <select asp-for="EData" class="form-control">
                             <option>Selecione...</option>
-                            <option>Pessoa</option>
-                            <option>Categoria</option>
-                            <option>Estabelecimento</option>
+                            <option value="Pessoa">Pessoa</option>
+                            <option value="Categoria">Categoria</option>
+                            <option value="Estabelecimento">Estabelecimento</option>
                         </select>
                     </div>
                 </div>
@@ -77,7 +111,7 @@
                     <div class="col-md-6">
                         <br />
                         <label asp-for="ETime" class="control-label"><i class="bi bi-calendar-range"></i> Período</label>
-                        <select asp-for="ETime" class="form-control form-control-sm">
+                        <select asp-for="ETime" class="form-control">
                             <option>Selecione...</option>
                             <option>Anos</option>
                             <option>Meses</option>
@@ -94,8 +128,17 @@
 </div>
 
 
-<div class="container">
-    <canvas id="myChart" style="box-sizing:border-boxl"></canvas>
+<div class="container d-flex justify-content-center">
+    @if (Model.EType != null && (Model.EType.Equals("pie") || Model.EType.Equals("doughnut")))
+    {
+        @:<div class="col-md-6">
+    }
+    else
+    {
+        @:<div class="col-md-12">
+    }
+        <canvas id="myChart"></canvas>
+    </div>
 </div>
 
 <br />
@@ -137,22 +180,81 @@
 </script>
 
 <script type="text/javascript">
-    var optionsVal1 = [];
-    $("#SelectedCats option").each(function () {
-        optionsVal1.push($(this).val());
-    });
-    var optionsVal2 = [];
-    $("#SelectedEstabs option").each(function () {
-        optionsVal2.push($(this).val());
-    });
-    var optionsVal3 = [];
-    $("#SelectedEstabs option").each(function () {
-        optionsVal3.push($(this).val());
-    });
-    $.ajax({
-        traditional: true,
-        dataType: "json",
-        data: { SelectedSortOrderOptions: optionsVal1, optionsVal2, optionsVal3 },
+    $('#SelectedCats').change(function (e) {
+        var optionsVal = [];
+        $("#SelectedCats option").each(function () {
+            optionsVal.push($(this).val());
+        });
+        $.ajax({
+            type: 'POST',
+            traditional: true,
+            dataType: "json",
+            data: { SelectedSortOrderOptions: optionsVal },
+            success: function () {
+
+            },
+        });
     });
 
+    $('#SelectedEstabs').change(function (e) {
+        var optionsVal = [];
+        $("#SelectedEstabs option").each(function () {
+            optionsVal.push($(this).val());
+        });
+        $.ajax({
+            type: 'POST',
+            traditional: true,
+            dataType: "json",
+            data: { SelectedSortOrderOptions: optionsVal },
+            success: function () {
+
+            },
+        });
+    });
+
+    $('#SelectedOwns').change(function (e) {
+        var optionsVal = [];
+        $("#SelectedOwns option").each(function () {
+            optionsVal.push($(this).val());
+        });
+        $.ajax({
+            type: 'POST',
+            traditional: true,
+            dataType: "json",
+            data: { SelectedSortOrderOptions: optionsVal },
+            success: function () {
+
+            },
+        });
+    });
+
+    (function ($) {
+        $(".searchCats").on('keyup', function (e) {
+            var $this = $(this);
+            var exp = new RegExp($this.val(), 'i');
+            $(".chkCats li label").each(function () {
+                var $self = $(this);
+                if (!exp.test($self.text())) {
+                    $self.parent().hide();
+                } else {
+                    $self.parent().show();
+                }
+            });
+        });
+    })(jQuery);
+
+    (function ($) {
+        $(".searchEstabs").on('keyup', function (e) {
+            var $this = $(this);
+            var exp = new RegExp($this.val(), 'i');
+            $(".chkEstabs li label").each(function () {
+                var $self = $(this);
+                if (!exp.test($self.text())) {
+                    $self.parent().hide();
+                } else {
+                    $self.parent().show();
+                }
+            });
+        });
+    })(jQuery);
 </script>

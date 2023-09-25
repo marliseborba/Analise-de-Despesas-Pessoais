@@ -68,7 +68,7 @@ namespace Expenses.Services
 
             // Cria argumentos para função FormatToPoint
             List<string> datas = new List<string>();
-            if(dataT.Equals("Pessoa"))
+            if(dataT != null && dataT.Equals("Pessoa"))
             {
                 datas = viewModel.Owns;
                 if ((datas.Count == 1 && datas.FirstOrDefault().Equals("Selecione...")) || datas.Count == 0)
@@ -77,7 +77,7 @@ namespace Expenses.Services
                 }
                 datas.Add("Owner");
             }
-            if(dataT.Equals("Categoria"))
+            if(dataT != null && dataT.Equals("Categoria"))
             {
                 datas = viewModel.Cats;
                 if ((datas.Count == 1 && datas.FirstOrDefault().Equals("Selecione...")) || datas.Count == 0)
@@ -86,7 +86,7 @@ namespace Expenses.Services
                 }
                 datas.Add("Category");
             }
-            if (dataT.Equals("Estabelecimento"))
+            if (dataT != null && dataT.Equals("Estabelecimento"))
             {
                 datas = viewModel.Estabs;
                 if ((datas.Count == 1 && datas.FirstOrDefault().Equals("Selecione...")) || datas.Count == 0)
@@ -97,7 +97,7 @@ namespace Expenses.Services
             }
 
             List<Object> times = new List<object>();
-            if(time.Equals("Anos"))
+            if(time != null && time.Equals("Anos"))
             {
                 for(int i = viewModel.MinDate.Year; i <= viewModel.MaxDate.Year; i++)
                 {
@@ -105,32 +105,43 @@ namespace Expenses.Services
                 }
                 times.Add("Year");
             }
-            if (time.Equals("Meses"))
+            if (time != null && time.Equals("Meses"))
             {
-                for (int i = 1; i <= 12; i++)
+                if (viewModel.MinDate.Year == viewModel.MaxDate.Year)
                 {
-                    times.Add(i);
+                    for (int i = viewModel.MinDate.Month; i <= viewModel.MaxDate.Month; i++)
+                    {
+                        times.Add(i);
+                    }
                 }
+                else
+                {
+                    for (int i = 1; i <= 12; i++)
+                    {
+                        times.Add(i);
+                    }
+                }
+
                 times.Add("Month");
             }
 
-            if (type.Equals("bar"))
+            if (type != null && type.Equals("bar"))
             {
                 data.datasets = FormatToPoint(movements, datas, times);
                 chart.options.borderRadius = 3;
             }
 
-            if (type.Equals("line"))
+            if (type != null && type.Equals("line"))
             {
                 data.datasets = FormatToPoint(movements, datas, times);
             }
 
-            if (type.Equals("pie") || type.Equals("doughnut"))
+            if (type != null && (type.Equals("pie") || type.Equals("doughnut")))
             {
                 ChartPie chartPie = new ChartPie();
                 chartPie.type = type;
-                //chartPie.options.plugins.title.text = "Gastos por " + dataT;
-                //chartPie.options.plugins.subtitle = new ChartPie.Option.Plugins.Subtitle(viewModel.MinDate.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture) + " - " + viewModel.MaxDate.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture));
+                chartPie.options.plugins.title.text = "Gastos por " + dataT;
+                chartPie.options.plugins.subtitle = new ChartPie.Option.Plugins.Subtitle(viewModel.MinDate.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture) + " - " + viewModel.MaxDate.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture));
 
                 chartPie.data = FormatToPie(movements, datas);
                 return JsonConvert.SerializeObject(chartPie);
@@ -162,7 +173,7 @@ namespace Expenses.Services
                             List<Movement> movs = new List<Movement>();
                             movs = movements.Where(x => x.Date.Year == (int)i && x.Owner.Name.ToLower().Contains(item.ToLower())).ToList();
                             double sum = ToPositive(movs.Sum(x => x.Value));
-                            if (sum > 0)
+                            if (sum >= 0)
                             {
                                 points.Add(new Point(i.ToString(), sum));
                             }
@@ -180,7 +191,7 @@ namespace Expenses.Services
                             string month = new DateTime(2023, (int)i, 1).ToString("MMMM", CultureInfo.CreateSpecificCulture("pt-br"));
                             month = char.ToUpper(month[0]) + month.Substring(1);
                             double sum = ToPositive(movs.Sum(x => x.Value));
-                            if (sum > 0)
+                            if (sum >= 0)
                             {
                                 points.Add(new Point(month, sum));
                             }
@@ -188,7 +199,7 @@ namespace Expenses.Services
                         dataSet.data = points;
                         dataSet.label = item.ToString();
                     }
-                    if (dataSet.data.Count > 0)
+                    if (dataSet.data.Count >= 0)
                     {
                         dataSets.Add(dataSet);
                     }
@@ -210,7 +221,7 @@ namespace Expenses.Services
                             List<Movement> movs = new List<Movement>();
                             movs = movements.Where(x => x.Date.Year == (int)i && x.Categories.Any(x => x.Name.ToLower().Contains(item.ToLower()))).ToList();
                             double sum = ToPositive(movs.Sum(x => x.Value));
-                            if (sum > 0)
+                            if (sum >= 0)
                             {
                                 points.Add(new Point(i.ToString(), sum));
                             }
@@ -228,7 +239,7 @@ namespace Expenses.Services
                             string month = new DateTime(2023, (int)i, 1).ToString("MMMM", CultureInfo.CreateSpecificCulture("pt-br"));
                             month = char.ToUpper(month[0]) + month.Substring(1);
                             double sum = ToPositive(movs.Sum(x => x.Value));
-                            if (sum > 0)
+                            if (sum >= 0)
                             {
                                 points.Add(new Point(month, sum));
                             }
@@ -236,7 +247,7 @@ namespace Expenses.Services
                         dataSet.data = points;
                         dataSet.label = item.ToString();
                     }
-                    if(dataSet.data.Count > 0)
+                    if(dataSet.data.Count >= 0)
                     {
                         dataSets.Add(dataSet);
                     }
@@ -258,7 +269,7 @@ namespace Expenses.Services
                             List<Movement> movs = new List<Movement>();
                             movs = movements.Where(x => x.Date.Year == (int)i && x.Establishment != null && x.Establishment.Name.ToLower().Contains(item.ToLower())).ToList();
                             double sum = ToPositive(movs.Sum(x => x.Value));
-                            if (sum > 0)
+                            if (sum >= 0)
                             {
                                 points.Add(new Point(i.ToString(), sum));
                             }
@@ -276,7 +287,7 @@ namespace Expenses.Services
                             string month = new DateTime(2023, (int)i, 1).ToString("MMMM", CultureInfo.CreateSpecificCulture("pt-br"));
                             month = char.ToUpper(month[0]) + month.Substring(1);
                             double sum = ToPositive(movs.Sum(x => x.Value));
-                            if (sum > 0)
+                            if (sum >= 0)
                             {
                                 points.Add(new Point(month, sum));
                             }
@@ -284,7 +295,7 @@ namespace Expenses.Services
                         dataSet.data = points;
                         dataSet.label = item.ToString();
                     }
-                    if (dataSet.data.Count > 0)
+                    if (dataSet.data.Count >= 0)
                     {
                         dataSets.Add(dataSet);
                     }
@@ -303,7 +314,7 @@ namespace Expenses.Services
             List<string> labels = new List<string>();
             List<double> points = new List<double>();
 
-            // Eixo X: Ano/Mês e DataSet: Owner/Categoria/Estab
+            // DataSet: Owner/Categoria/Estab
             if (type.Equals("Category"))
             {
                 datas.Remove(type);
@@ -335,6 +346,30 @@ namespace Expenses.Services
                 {
                     List<Movement> movs = new List<Movement>();
                     movs = movements.Where(x => x.Establishment != null && x.Establishment.Name.ToLower().Contains(item.ToLower())).ToList();
+                    if (movs.Count() > 0)
+                    {
+                        List<double> values = new List<double>();
+                        values = movs.Select(x => x.Value).ToList();
+                        double sum = 0.0;
+                        foreach (double v in values)
+                        {
+                            sum += ToPositive(v);
+                        }
+                        labels.Add(item);
+                        points.Add(sum);
+                    }
+                    dataSet.data = points;
+                }
+                data.datasets.Add(dataSet);
+            }
+
+            if (type.Equals("Owner"))
+            {
+                datas.Remove(type);
+                foreach (var item in datas)
+                {
+                    List<Movement> movs = new List<Movement>();
+                    movs = movements.Where(x => x.Owner != null && x.Owner.Name.ToLower().Contains(item.ToLower())).ToList();
                     if (movs.Count() > 0)
                     {
                         List<double> values = new List<double>();

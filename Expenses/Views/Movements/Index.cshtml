@@ -18,18 +18,15 @@
     <div class="card card-body">
         <form asp-action="SearchMovements">
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-3">
                     <label asp-for="MinDate" class="control-label">Início</label>
                     <input type="date" asp-for="MinDate" class="form-control" value="@Model.MinDate.ToString("yyyy-MM-dd")" />
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-3">
                     <label asp-for="MaxDate" class="control-label">Fim</label>
                     <input type="date" asp-for="MaxDate" class="form-control" value="@Model.MaxDate.ToString("yyyy-MM-dd")" />
                 </div>
-            </div>
-            <div class="row">
                 <div class="col-md-6">
-                    <br />
                     <label class="control-label">Pessoas</label><br />
                     <div class="chkOwns form-control">
                         <ul style="width:100%; list-style-type: none; margin:0; padding:0">
@@ -42,10 +39,9 @@
                                 </li>
                             }
                         </ul>
-                        <br/>
+                        <br />
                     </div>
                 </div>
-                <div class="col-md-6"></div>
             </div>
             <div class="row">
                 <div class="col-md-6">
@@ -65,7 +61,6 @@
                         </ul>
                     </div>
                 </div>
-
                 <div class="col-md-6">
                     <br />
                     <label class="control-label">Estabelecimentos</label><br />
@@ -84,10 +79,10 @@
                     </div>
                 </div>
             </div>
-                <div>
-                    <br />
-                    <button type="submit" class="btn btn-outline-primary">Buscar</button>
-                </div>
+            <div>
+                <br />
+                <button type="submit" class="btn btn-outline-primary">Buscar</button>
+            </div>
         </form>
     </div>
 </div>

@@ -46,7 +46,7 @@ namespace Expenses.Controllers
             chartViewModel.EType = "bar";
             chartViewModel.EData = "Categoria";
             chartViewModel.ETime = "Meses";
-            chartViewModel.MinDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month - 2, 1);
+            chartViewModel.MinDate = new DateTime(2021, 1, 1);
             chartViewModel.MaxDate = DateTime.Now;
             chartViewModel.ChartJ = _chartService.Chart(chartViewModel);
             return View(chartViewModel);
