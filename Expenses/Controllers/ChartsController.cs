@@ -38,7 +38,18 @@ namespace Expenses.Controllers
 
 		public IActionResult Index()
         {
-            return View(_chartService.Example());
+            ChartViewModel chartViewModel = new ChartViewModel();
+            chartViewModel.Categories = _context.Category.ToList();
+            chartViewModel.Establishments = _context.Establishment.ToList();
+            chartViewModel.Owners = _context.Owner.ToList();
+
+            chartViewModel.EType = "bar";
+            chartViewModel.EData = "Categoria";
+            chartViewModel.ETime = "Meses";
+            chartViewModel.MinDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month - 2, 1);
+            chartViewModel.MaxDate = DateTime.Now;
+            chartViewModel.ChartJ = _chartService.Chart(chartViewModel);
+            return View(chartViewModel);
         }
 
 
