@@ -28,7 +28,7 @@ O funcionamento consiste em cadastrar as despesas fazendo upload de faturas ou e
 <br/>
 
 ### Upload de Extrato ou Fatura
-<p>Na tela de upload são enviados os arquivos no formato OFX, podendo ser enviados vários de uma só vez.</p>
+<p>Na tela de upload são enviados os arquivos no formato OFX, podendo ser enviados vários de uma só vez. Ao salvar as movimentações, elas sao automaticamente vinculadas às categorias e estabelecimentos relacionados de acordo com as palavras-chave encontradas.</p>
 <img src="https://github.com/marliseborba/img/blob/main/expenses/upload.gif?raw=true"/>
 <br/>
 
