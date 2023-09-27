@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using static System.Net.WebRequestMethods;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Expenses.Controllers
 {
@@ -50,6 +51,36 @@ namespace Expenses.Controllers
             _movementService.PopulateViewModel(viewModel);
 
             return View("Index", viewModel);
+        }
+
+        public IActionResult Create()
+        {
+            MovementViewModel viewModel = new MovementViewModel();
+            _movementService.PopulateViewModel(viewModel);
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Create(Movement movement, string ownerName, string establishmentName, List<string> categoriesNames)
+        {
+            if (!ModelState.IsValid)
+            {
+                MovementViewModel viewModel = new MovementViewModel();
+                _movementService.PopulateViewModel(viewModel);
+                viewModel.Movement = movement;
+                //return View(viewModel);
+            }
+            try
+            {
+                var created = _movementService.Insert(movement, ownerName, establishmentName, categoriesNames);
+                TempData["created"] = created.Description;
+                return RedirectToAction(nameof(Index));
+            }
+            catch (ApplicationException e)
+            {
+                return RedirectToAction(nameof(Error), new { message = e.Message });
+            }
         }
 
         public IActionResult SearchMovements(MovementViewModel viewModel)
@@ -99,12 +130,6 @@ namespace Expenses.Controllers
             ViewData["maxDate"] = maxDate.Value.ToString("yyyy-MM-dd");
             var result = _movementService.FindByDate(minDate, maxDate);
             return View(nameof(Index), result);
-        }
-
-        [HttpPost]
-        public void Create(Movement movement)
-        {
-            _movementService.Insert(movement);
         }
 
         public void Edit(Movement movement)

@@ -1,0 +1,94 @@
+﻿@model Expenses.Models.ViewModels.MovementViewModel
+
+@{
+    ViewData["Title"] = "Movimentações";
+}
+
+<br />
+<br />
+<h2><i class="fa-solid fa-right-left"></i> @ViewData["Title"]</h2>
+<br />
+
+<div class="container">
+    <form asp-action="Create">
+        <legend>Cadastrar: </legend>
+        <div class="row border-primary">
+            <div class="col-md-6">
+                <label asp-for="Movement.Description" class="control-label">Descrição</label>
+                <input asp-for="Movement.Description" class="form-control" />
+                <span asp-validation-for="Movement.Description" class="text-danger"></span>
+                <br/>
+                <label asp-for="Movement.Date" class="control-label">Data</label>
+                <input type="date" asp-for="Movement.Date" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                <br/>
+                <label asp-for="Establishment.Name" class="control-label">Estabelecimento</label>
+                <select asp-for="Establishment.Name" name="establishmentName" asp-items="@(new SelectList(Model.Establishments,"Name","Name"))" class="form-control"><option>Selecione...</option></select>
+                <br/>
+                <label asp-for="Owner.Name" class="control-label">Pessoa</label>
+                <select asp-for="Owner.Name" name="ownerName" asp-items="@(new SelectList(Model.Owners,"Name","Name"))" class="form-control"><option>Selecione...</option></select>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="Movement.Value" class="control-label">Valor</label>
+                <input asp-for="Movement.Value" class="form-control" />
+                <br/>
+                <label class="control-label">Categorias</label><br />
+                <input class="searchCats form-control" type="text" placeholder="Buscar categoria" id="searchCats" /><br />
+                <div class="chkCats">
+                    <ul style="width:100%; list-style-type: none; margin:0; padding:0">
+                        @foreach (Category cat in Model.Categories)
+                        {
+                            <li style="width:50%; float:left">
+                                <label for="SelectedCats">
+                                    <input type="checkbox" id="SelectedCats" name="categoriesNames" checked="@Model.Cats.Any(x => x.Contains(cat.Name))" value="@cat.Name" /> @cat.Name
+                                </label>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-6">
+
+            </div>
+            <div>
+                <br />
+                <button type="submit" class="btn btn-outline-primary">Salvar</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js" type="text/javascript"></script>
+<script src="~/lib/jquery/dist/multiselect.min.js"></script>
+
+<script type="text/javascript">
+    $('#SelectedCats').change(function (e) {
+        var optionsVal = [];
+        $("#SelectedCats option").each(function () {
+            optionsVal.push($(this).val());
+        });
+        $.ajax({
+            type: 'POST',
+            traditional: true,
+            dataType: "json",
+            data: { SelectedSortOrderOptions: optionsVal },
+            success: function () {
+
+            },
+        });
+    });
+
+    (function ($) {
+        $(".searchCats").on('keyup', function (e) {
+            var $this = $(this);
+            var exp = new RegExp($this.val(), 'i');
+            $(".chkCats li label").each(function () {
+                var $self = $(this);
+                if (!exp.test($self.text())) {
+                    $self.parent().hide();
+                } else {
+                    $self.parent().show();
+                }
+            });
+        });
+    })(jQuery);
+</script>

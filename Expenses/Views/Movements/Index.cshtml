@@ -9,11 +9,21 @@
 <h2><i class="fa-solid fa-right-left"></i> @ViewData["Title"]</h2>
 <br />
 
-<p class="d-inline-flex gap-1">
-    <a class="btn btn-outline-primary collapsed" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
-        <i class="bi bi-search"></i> Buscar
-    </a>
-</p>
+<div class="row">
+    <div class="col-md-2">
+        <a class="btn btn-outline-primary collapsed" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+            <i class="bi bi-search"></i> Buscar
+        </a>
+    </div>
+    <div class="col-md-8"></div>
+    <div align="right" class="col-md-2">
+        <a class="btn btn-outline-success" onclick="location.href='@Url.Action("Create", "Movements")'" role="button" aria-expanded="false">
+            <i class="bi bi-plus"></i> Criar
+        </a>
+    </div>
+</div>
+<br/>
+
 <div class="collapse" id="collapseExample">
     <div class="card card-body">
         <form asp-action="SearchMovements">
@@ -91,7 +101,6 @@
 
 </div>
 <br />
-<br />
 @if (TempData.ContainsKey("saved"))
 {
     int saved = (int)TempData["saved"];
@@ -114,6 +123,25 @@
         <div class="alert alert-dismissible alert-warning">
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             <span>Nenhuma movimentação foi salva.</span>
+        </div>
+    }
+}
+
+@if (TempData.ContainsKey("created"))
+{
+    string created = (string)TempData["created"];
+    if (created != null)
+    {
+        <div class="alert alert-dismissible alert-success">
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <span>A movimentação <strong>@TempData["created"] </strong> foi criada.</span>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-dismissible alert-warning">
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <span>Nenhuma movimentação foi criada.</span>
         </div>
     }
 }
@@ -153,7 +181,7 @@
 
 <table id="myTable" class="table table-hover">
     <thead>
-        <tr class="table-active">
+        <tr style="font-weight:bold">
             <th style="border-bottom-color:#444444">
                 Autora
             </th>

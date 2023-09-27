@@ -15,6 +15,7 @@ using OfxSharp;
 using Aspose.Finance.Xbrl.Dom;
 using Aspose.Finance.Xbrl;
 using Microsoft.EntityFrameworkCore.Metadata;
+using System.Security.AccessControl;
 
 namespace Expenses.Services
 {
@@ -36,10 +37,20 @@ namespace Expenses.Services
             _ownerService = ownerService;
         }
 
-        public void Insert(Movement movement)
+        public Movement Insert(Movement movement, string ownerName, string establishmentName, List<string> categoriesNames)
         {
+            movement.Identifier = Guid.NewGuid().ToString();
+            List<Category> cats = _context.Category.Where(x => categoriesNames.Contains(x.Name)).ToList();
+            Establishment estab = _context.Establishment.Where(x => x.Name.ToLower().Contains(establishmentName.ToLower())).FirstOrDefault();
+            Owner own = _context.Owner.Where(x => x.Name.ToLower().Contains(ownerName.ToLower())).FirstOrDefault();
+            movement.Categories = cats;
+            movement.Establishment = estab;
+            movement.Owner = own;
+            movement.Value = movement.Value * -1;
+            movement.MovementType = Enum.Parse<MovementType>("BANK");
             _context.Add(movement);
             _context.SaveChanges();
+            return movement;
         }
 
         public void Insert(List<Movement> movements)
@@ -150,11 +161,6 @@ namespace Expenses.Services
             foreach (var item in _context.Category)
             {
                 viewModel.Categories.Add(item);
-            }
-
-            foreach (var item in _context.SubCategory)
-            {
-                viewModel.SubCategories.Add(item);
             }
         }
 

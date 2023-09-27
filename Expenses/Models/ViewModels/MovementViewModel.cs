@@ -16,8 +16,6 @@ namespace Expenses.Models.ViewModels
         public Category Category { get; set; } = new Category();
         public ICollection<Category> Categories { get; set; } = new List<Category>();
         public List<string> Cats { get; set; } = new List<string>();
-        public SubCategory SubCategory { get; set; }
-        public ICollection<SubCategory> SubCategories { get; set; } = new List<SubCategory>();
         public Owner Owner { get; set; }
         public ICollection<Owner> Owners { get; set; } = new List<Owner>();
         public List<string> Owns { get; set; } = new List<string>();
