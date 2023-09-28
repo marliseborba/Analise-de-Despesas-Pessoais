@@ -1,7 +1,7 @@
 # Análise de Despesas Pessoais
-Este é um sistema que estou desenvolvendo para uso próprio com o objetivo de analisar gastos pessoais e familiares. O propósito é ter um sistema capaz de armazenar dados e exibí-los em gráficos a fim de substituir o controle que costumava ser feito em planilhas do Excel.
+Este é um sistema que estou desenvolvendo para uso próprio com o objetivo de analisar gastos pessoais e familiares. O propósito é ter um sistema adaptado às minhas necessidades, as quais envolvem o armazenamnento de dados e a sua exibição em gráficos de modo dinâmico, a fim de substituir o controle manual de despesas que costumava ser feito em planilhas do Excel. Além do uso, o propósito deste projeto é colocar em prática os conhecimentos adquiridos recentemente no curso completo de C# combinados à minha bagagem, enriquecendo meu portifólio.
 
-O funcionamento consiste em cadastrar as despesas fazendo upload de faturas ou extratos bancários no formato OFX ou ainda registrando as despesas manualmente. As despesas são organizadas em Estabelecimentos e Categorias que são cadastrados manualmente e vinculados às despesas através de palavras-chave. A visualização dos registros é feita em modo de tabela com possibilidade de filtrar a busca, ou em variados tipos de gráfico, também com a possibilidade de filtrar os dados e ainda escolher a forma como os dados serão exibidos.
+O funcionamento consiste em cadastrar as despesas fazendo upload de faturas ou extratos bancários no formato OFX ou ainda registrando as despesas manualmente. As despesas são organizadas em Estabelecimentos e Categorias. Estes são cadastrados manualmente e vinculados também manualmente à palavras-chave. Uma vez feita essa vinculação manual, as despesas serão automaticamente vinculadas aos respectivos Estabelecimentos e Categorias assim que cadastradas. A visualização dos registros é feita em modo de tabela, com diversas possibilidades de filtros, ou em forma de gráfico, também com a possibilidade de filtrar os dados, de escolher o tipo de gráfico e a forma como os dados serão exibidos nele.
 
 <br/>
 
@@ -37,17 +37,30 @@ O funcionamento consiste em cadastrar as despesas fazendo upload de faturas ou e
 <img src="https://github.com/marliseborba/img/blob/main/expenses/movements.gif?raw=true"/>
 <br/>
 
+<p>Além do upload de arquivos OFX, é possível cadastrar movimentações manualmente.</p>
+<img src="https://github.com/marliseborba/img/blob/main/expenses/movements-create.gif?raw=true"/>
+<br/>
+
 ### Cadastro ou Edição de Estabelecimento ou Categoria
 <p>O cadastro e edição tanto de Estabelecimento quanto de Categoria funciona do mesmo modo, vinculando palavras-chave previamente cadastradas.</p>
 <img src="https://github.com/marliseborba/img/blob/main/expenses/establishment-edit.gif?raw=true"/>
 <br/>
 
 ### Gerando Gráficos
-<p>Na tela de gráficos é possível filtrar os dados consultados e configurar o modo como serão exibidos no gráfico.</p>
+<p>Na tela de gráficos é possível filtrar os dados consultados, escolher o tipo de gráfico desejado e configurar o modo como os dados serão exibidos.</p>
 
-#### Exemplo filtrando movimentações de uma categoria e exibindo separadamente por estabelecimento
-<img src="https://github.com/marliseborba/img/blob/main/expenses/chart-search-estab.gif?raw=true"/>
+#### Gráfico em Linhas
+<img src="https://github.com/marliseborba/img/blob/main/expenses/chart-line.gif?raw=true"/>
 <br/>
 
-#### Exemplo filtrando movimentações de uma categoria e exibindo separadamente por pessoa
-<img src="https://github.com/marliseborba/img/blob/main/expenses/chart-search-own.gif?raw=true"/>
+#### Gráfico em Barras
+<img src="https://github.com/marliseborba/img/blob/main/expenses/chart-bar.gif?raw=true"/>
+<br/>
+
+#### Gráfico Pizza
+<img src="https://github.com/marliseborba/img/blob/main/expenses/chart-pie.gif?raw=true"/>
+<br/>
+
+#### Gráfico Donut
+<img src="https://github.com/marliseborba/img/blob/main/expenses/chart-donut.gif?raw=true"/>
+<br/>
