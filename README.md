@@ -5,7 +5,7 @@ Este é um sistema que estou desenvolvendo para uso próprio com o objetivo de a
 
 ## Uso
 
-O uso parte do cadastro de despesas através do upload de faturas ou extratos bancários no formato OFX ou ainda do registro manual das despesas. As despesas são organizadas em Estabelecimentos e Categorias. Estes são cadastrados manualmente e vinculados também manualmente à palavras-chave. Uma vez feita essa vinculação manual, as despesas serão automaticamente vinculadas aos respectivos Estabelecimentos e Categorias assim que cadastradas. A visualização dos registros é feita em modo de tabela, com diversas possibilidades de filtros, ou em forma de gráfico, também com a possibilidade de filtrar os dados, de escolher o tipo de gráfico e a forma como os dados serão exibidos nele. Confira abaixo imagens das telas em funcionamento.
+O uso parte do cadastro de despesas através do upload de faturas ou extratos bancários no formato OFX ou ainda do registro manual das despesas. As despesas são organizadas em Estabelecimentos e Categorias. Estes são cadastrados manualmente e vinculados também manualmente à palavras-chave. Uma vez feita essa vinculação manual, as despesas serão automaticamente vinculadas aos respectivos Estabelecimentos e Categorias assim que cadastradas. A visualização dos registros é feita em modo de tabela, com diversas possibilidades de filtros, ou em forma de gráfico, também com a possibilidade de filtrar os dados, de escolher o tipo de gráfico e a forma como os dados serão exibidos nele. Por ainda estar em fase de desenvolvimento, o sistema não está hospedado de forma como possa ser visitado, mas é possível conferir o funcionamento de suas telas <a href="#telas">mais abaixo!</a>
 
 <br/>
 
