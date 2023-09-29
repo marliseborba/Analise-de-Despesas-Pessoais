@@ -1,7 +1,11 @@
 # Análise de Despesas Pessoais
-Este é um sistema que estou desenvolvendo para uso próprio com o objetivo de analisar gastos pessoais e familiares. O propósito é ter um sistema adaptado às minhas necessidades, as quais envolvem o armazenamnento de dados e a sua exibição em gráficos de modo dinâmico, a fim de substituir o controle manual de despesas que costumava ser feito em planilhas do Excel. Além do uso, o propósito deste projeto é colocar em prática os conhecimentos adquiridos recentemente no curso completo de C# combinados à minha bagagem, enriquecendo meu portifólio.
+Este é um sistema que estou desenvolvendo para uso próprio com o objetivo de analisar gastos pessoais e familiares. O propósito é ter um sistema adaptado às minhas necessidades, as quais envolvem o armazenamnento de dados e a sua exibição em gráficos de modo dinâmico, a fim de substituir o controle manual de despesas domésticas que costumava ser feito em planilhas do Excel. Além do uso, o propósito deste projeto é colocar em prática os conhecimentos adquiridos recentemente no curso completo de C# combinados à minha bagagem, também enriquecendo meu portifólio.
 
-O funcionamento consiste em cadastrar as despesas fazendo upload de faturas ou extratos bancários no formato OFX ou ainda registrando as despesas manualmente. As despesas são organizadas em Estabelecimentos e Categorias. Estes são cadastrados manualmente e vinculados também manualmente à palavras-chave. Uma vez feita essa vinculação manual, as despesas serão automaticamente vinculadas aos respectivos Estabelecimentos e Categorias assim que cadastradas. A visualização dos registros é feita em modo de tabela, com diversas possibilidades de filtros, ou em forma de gráfico, também com a possibilidade de filtrar os dados, de escolher o tipo de gráfico e a forma como os dados serão exibidos nele.
+<br/>
+
+## Funcionamento
+
+O funcionamento consiste em cadastrar as despesas fazendo upload de faturas ou extratos bancários no formato OFX ou ainda registrando as despesas manualmente. As despesas são organizadas em Estabelecimentos e Categorias. Estes são cadastrados manualmente e vinculados também manualmente à palavras-chave. Uma vez feita essa vinculação manual, as despesas serão automaticamente vinculadas aos respectivos Estabelecimentos e Categorias assim que cadastradas. A visualização dos registros é feita em modo de tabela, com diversas possibilidades de filtros, ou em forma de gráfico, também com a possibilidade de filtrar os dados, de escolher o tipo de gráfico e a forma como os dados serão exibidos nele. Confira abaixo
 
 <br/>
 
@@ -20,7 +24,7 @@ O funcionamento consiste em cadastrar as despesas fazendo upload de faturas ou e
 </ul>
 <br/>
 
-## Screenshots
+## Telas
 
 ### Tela Inicial
 <p>Na tela inicial é exibido um resumo das despesas.</p>
