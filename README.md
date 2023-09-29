@@ -41,9 +41,14 @@ O funcionamento consiste em cadastrar as despesas fazendo upload de faturas ou e
 <img src="https://github.com/marliseborba/img/blob/main/expenses/movements-create.gif?raw=true"/>
 <br/>
 
+### Cadastro de Palavras-chave
+<p>O cadastro de Palavras-chave é feito para que se possa vincular um Estabelecimento ou Categoria a elas.</p>
+<img src="https://github.com/marliseborba/img/blob/main/expenses/keywords-create.gif?raw=true"/>
+<br/>
+
 ### Cadastro ou Edição de Estabelecimento ou Categoria
 <p>O cadastro e edição tanto de Estabelecimento quanto de Categoria funciona do mesmo modo, vinculando palavras-chave previamente cadastradas.</p>
-<img src="https://github.com/marliseborba/img/blob/main/expenses/establishment-edit.gif?raw=true"/>
+<img src="https://github.com/marliseborba/img/blob/main/expenses/establishment-create.gif?raw=true"/>
 <br/>
 
 ### Gerando Gráficos
